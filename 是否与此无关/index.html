@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>是否与此无关 | 故事推理游戏</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-question-circle"></i> 是否与此无关</h1>
+            <p class="subtitle">一个类似海龟汤的故事推理游戏</p>
+        </header>
+
+        <main class="game-container">
+            <div class="game-info">
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-label">问题数</span>
+                        <span class="stat-value" id="question-count">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">状态</span>
+                        <span class="stat-value" id="game-status">推理中</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">时间</span>
+                        <span class="stat-value" id="game-time">00:00</span>
+                    </div>
+                </div>
+                <button class="btn-secondary" id="hint-btn">
+                    <i class="fas fa-lightbulb"></i> 提示
+                </button>
+            </div>
+
+            <div class="story-section">
+                <h2><i class="fas fa-book-open"></i> 故事片段</h2>
+                <div class="story-fragment" id="story-fragment">
+                    一个男人走进一家酒吧，点了一杯水。酒保看了他一眼，然后从柜台下拿出一把枪。男人说了声"谢谢"就走了出去。
+                </div>
+                <div class="story-source">
+                    <i class="fas fa-info-circle"></i> 请通过提问来还原完整故事
+                </div>
+            </div>
+
+            <div class="interaction-section">
+                <div class="question-history" id="question-history">
+                    <h3><i class="fas fa-history"></i> 提问记录</h3>
+                    <div class="history-list" id="history-list">
+                        <div class="empty-history">
+                            <i class="fas fa-comment-dots"></i>
+                            <p>还没有提问记录，开始你的第一个提问吧！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="answer-controls">
+                    <h3><i class="fas fa-reply"></i> 系统回答</h3>
+                    <div class="answer-display" id="answer-display">
+                        <div class="empty-answer">
+                            <i class="fas fa-robot"></i>
+                            <p>系统回答将显示在这里</p>
+                        </div>
+                    </div>
+                    <div class="answer-buttons">
+                        <button class="answer-btn yes-btn" data-answer="yes">
+                            <i class="fas fa-check"></i> 是
+                        </button>
+                        <button class="answer-btn no-btn" data-answer="no">
+                            <i class="fas fa-times"></i> 否
+                        </button>
+                        <button class="answer-btn irrelevant-btn" data-answer="irrelevant">
+                            <i class="fas fa-ban"></i> 无关
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-container">
+                    <input type="text"
+                           id="question-input"
+                           placeholder="输入你的问题（例如：这个男人认识酒保吗？）"
+                           autocomplete="off">
+                    <button id="ask-btn" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> 提问
+                    </button>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-action" id="reconstruct-btn">
+                        <i class="fas fa-puzzle-piece"></i> 还原故事
+                    </button>
+                    <button class="btn-action" id="answer-btn">
+                        <i class="fas fa-eye"></i> 查看答案
+                    </button>
+                    <button class="btn-action" id="reset-btn">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                </div>
+            </div>
+
+            <div class="rules-section">
+                <h3><i class="fas fa-graduation-cap"></i> 游戏规则</h3>
+                <ul>
+                    <li>系统会提供一个<strong>不完整的故事片段</strong>，你需要通过提问来还原完整故事</li>
+                    <li>你可以提出任何<strong>是/否问题</strong>，系统会回答"是"、"否"或"与此无关"</li>
+                    <li>当你觉得已经推理出完整故事时，可以点击"<strong>还原故事</strong>"提交你的版本</li>
+                    <li>如果还原的故事大致正确，游戏胜利！否则可以继续提问</li>
+                    <li>任何时候都可以点击"<strong>查看答案</strong>"直接查看完整故事</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 是否与此无关 | 设计简约高级风格 | 类似海龟汤的推理游戏</p>
+        </footer>
+    </div>
+
+    <!-- 模态对话框 -->
+    <div class="modal" id="reconstruct-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-puzzle-piece"></i> 还原故事</h2>
+            <p>请写下你推理出的完整故事：</p>
+            <textarea id="reconstruct-text" placeholder="在此输入你推理出的完整故事..."></textarea>
+            <div class="modal-buttons">
+                <button class="btn-secondary" id="cancel-reconstruct">取消</button>
+                <button class="btn-primary" id="submit-reconstruct">提交验证</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="answer-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-eye"></i> 完整故事</h2>
+            <div class="full-story" id="full-story">
+                这个男人一直打嗝，他听说突然的惊吓可以治愈打嗝。他走进酒吧点了一杯水，希望酒保会做点什么来吓唬他。酒保明白了他的意图，从柜台下拿出一把枪指向他。男人被吓到，打嗝停止了，于是他说了声"谢谢"就走了出去。
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" id="close-answer">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-trophy"></i> 恭喜！</h2>
+            <div class="result-message" id="result-message">
+                你成功还原了故事！
+            </div>
+            <div class="result-stats">
+                <p>提问次数: <span id="result-questions">0</span></p>
+                <p>用时: <span id="result-time">00:00</span></p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" id="play-again">再玩一次</button>
+                <button class="btn-secondary" id="view-answer-result">查看答案</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="hint-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-lightbulb"></i> 提示</h2>
+            <div class="hint-content">
+                <p>尝试问一些关于角色动机、背景或故事中异常细节的问题。</p>
+                <p>例如："这个男人有什么健康问题吗？"或"酒保为什么会有枪？"</p>
+                <p>好的问题通常关注"为什么"和"怎么样"，而不仅仅是"是什么"。</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" id="close-hint">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一笔画游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .level-info {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #gameCanvas {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .message {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1em;
+            min-height: 30px;
+        }
+
+        .success {
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #f56565;
+        }
+
+        .hint {
+            background: #fef5e7;
+            border-left: 4px solid #f6ad55;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-line {
+            width: 30px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .normal-line {
+            background: #4a5568;
+        }
+
+        .double-line {
+            background: #e53e3e;
+        }
+
+        /* 评分弹窗样式 */
+        .rating-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .rating-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .rating-title {
+            font-size: 2em;
+            color: #48bb78;
+            margin-bottom: 20px;
+        }
+
+        .rating-subtitle {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin-bottom: 25px;
+        }
+
+        .stars-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .star {
+            font-size: 35px;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #f6ad55;
+            transform: scale(1.1);
+        }
+
+        .comment-section {
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .label-text {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .rating-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .submit-rating-btn {
+            background: #48bb78;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-rating-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .submit-rating-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .skip-rating-btn {
+            background: #a0aec0;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .skip-rating-btn:hover {
+            background: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 一笔画游戏</h1>
+
+        <div class="game-info">
+            <div class="level-info">关卡 <span id="currentLevel">1</span> / <span id="totalLevels">0</span></div>
+            <button class="button" onclick="game.hint()">💡 提示</button>
+            <button class="button" onclick="game.resetLevel()">🔄 重置</button>
+        </div>
+
+        <div class="hint" id="hintBox" style="display: none;">
+            <strong>提示：</strong><span id="hintText"></span>
+        </div>
+
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+        <div class="message" id="message"></div>
+
+        <div class="controls">
+            <button class="button" onclick="game.prevLevel()" id="prevBtn">⬅️ 上一关</button>
+            <button class="button" onclick="game.nextLevel()" id="nextBtn">下一关 ➡️</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-line normal-line"></div>
+                <span>画一次</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line double-line"></div>
+                <span>画两次</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评分弹窗 -->
+    <div id="ratingModal" class="rating-modal">
+        <div class="rating-content">
+            <div class="rating-title">🎉 恭喜通关！</div>
+            <div class="rating-subtitle">请为游戏评分</div>
+
+            <div class="stars-container" id="starsContainer">
+                <span class="star" data-rating="1">⭐</span>
+                <span class="star" data-rating="2">⭐</span>
+                <span class="star" data-rating="3">⭐</span>
+                <span class="star" data-rating="4">⭐</span>
+                <span class="star" data-rating="5">⭐</span>
+            </div>
+
+            <div class="comment-section">
+                <label class="label-text">意见建议（选填）：</label>
+                <textarea class="comment-textarea" id="commentText" placeholder="分享您的游戏感受和建议..."></textarea>
+            </div>
+
+            <div class="rating-buttons">
+                <button class="skip-rating-btn" onclick="game.skipRating()">跳过</button>
+                <button class="submit-rating-btn" id="submitRatingBtn" onclick="game.submitRating()" disabled>提交评分</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class OneStrokeGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.currentLevel = 0;
+                this.levels = this.generateLevels();
+                this.currentPath = [];
+                this.isDrawing = false;
+                this.draggedEdge = null;
+                this.edgeStates = new Map(); // 记录每条边的绘制次数
+                this.userRating = 0; // 用户评分
+                this.hasShownRatingModal = false; // 是否已经显示过评分弹窗
+
+                this.setupCanvas();
+                this.setupEventListeners();
+                this.setupRatingSystem();
+                this.loadLevel();
+            }
+
+            generateLevels() {
+                return [
+                    // 关卡 1: 简单三角形
+                    {
+                        nodes: [
+                            {id: 0, x: 100, y: 200},
+                            {id: 1, x: 300, y: 100},
+                            {id: 2, x: 500, y: 200}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 2, to: 0, required: 1}
+                        ],
+                        hint: '记住：每条线只能画一次！',
+                        name: '简单开始'
+                    },
+
+                    // 关卡 2: 四边形
+                    {
+                        nodes: [
+                            {id: 0, x: 150, y: 150},
+                            {id: 1, x: 450, y: 150},
+                            {id: 2, x: 450, y: 250},
+                            {id: 3, x: 150, y: 250}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 2, to: 3, required: 1},
+                            {from: 3, to: 0, required: 1},
+                            {from: 0, to: 2, required: 1}
+                        ],
+                        hint: '对角线很关键！',
+                        name: '四边形挑战'
+                    },
+
+                    // 关卡 3: 五角星
+                    {
+                        nodes: [
+                            {id: 0, x: 300, y: 80},
+                            {id: 1, x: 420, y: 180},
+                            {id: 2, x: 380, y: 320},
+                            {id: 3, x: 220, y: 320},
+                            {id: 4, x: 180, y: 180}
+                        ],
+                        edges: [
+                            {from: 0, to: 2, required: 1},
+                            {from: 2, to: 4, required: 1},
+                            {from: 4, to: 1, required: 1},
+                            {from: 1, to: 3, required: 1},
+                            {from: 3, to: 0, required: 1},
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 2, to: 3, required: 1},
+                            {from: 3, to: 4, required: 1},
+                            {from: 4, to: 0, required: 1}
+                        ],
+                        hint: '五角星需要一些技巧！',
+                        name: '五角星'
+                    },
+
+                    // 关卡 4: 房子形状（修改为0-4和1-4可重复一次）
+                    {
+                        nodes: [
+                            {id: 0, x: 250, y: 200},
+                            {id: 1, x: 350, y: 200},
+                            {id: 2, x: 350, y: 300},
+                            {id: 3, x: 250, y: 300},
+                            {id: 4, x: 300, y: 150}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 2, to: 3, required: 1},
+                            {from: 3, to: 0, required: 1},
+                            {from: 0, to: 4, required: 2},
+                            {from: 1, to: 4, required: 2},
+                            {from: 4, to: 3, required: 1}
+                        ],
+                        hint: '从屋顶开始，屋顶的两条线可以重复走一次！',
+                        name: '小房子'
+                    },
+
+                    // 关卡 5: 双三角（修改为3-0和3-1可重复一次）
+                    {
+                        nodes: [
+                            {id: 0, x: 200, y: 150},
+                            {id: 1, x: 300, y: 250},
+                            {id: 2, x: 400, y: 150},
+                            {id: 3, x: 300, y: 350}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 2, to: 0, required: 1},
+                            {from: 0, to: 3, required: 2},
+                            {from: 1, to: 3, required: 2},
+                            {from: 2, to: 3, required: 1}
+                        ],
+                        hint: '从顶部三角形开始，底部的两条边可以重复走！',
+                        name: '双三角形'
+                    },
+
+                    // 关卡 6: 引入红线规则
+                    {
+                        nodes: [
+                            {id: 0, x: 200, y: 200},
+                            {id: 1, x: 300, y: 100},
+                            {id: 2, x: 400, y: 200},
+                            {id: 3, x: 300, y: 300}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 2, to: 3, required: 1},
+                            {from: 3, to: 0, required: 1},
+                            {from: 0, to: 2, required: 2}, // 红线：需要画两次
+                            {from: 1, to: 3, required: 2}  // 红线：需要画两次
+                        ],
+                        hint: '红色线需要画两次，注意顺序！',
+                        name: '双线挑战'
+                    },
+
+                    // 关卡 7: 复杂红线
+                    {
+                        nodes: [
+                            {id: 0, x: 300, y: 100},
+                            {id: 1, x: 200, y: 200},
+                            {id: 2, x: 400, y: 200},
+                            {id: 3, x: 250, y: 300},
+                            {id: 4, x: 350, y: 300}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 0, to: 2, required: 1},
+                            {from: 1, to: 3, required: 1},
+                            {from: 2, to: 4, required: 1},
+                            {from: 3, to: 4, required: 1},
+                            {from: 0, to: 3, required: 2}, // 红线
+                            {from: 0, to: 4, required: 2}  // 红线
+                        ],
+                        hint: '中央的红线是关键！',
+                        name: '复杂双线'
+                    },
+
+                    // 关卡 8: 混合难度
+                    {
+                        nodes: [
+                            {id: 0, x: 300, y: 80},
+                            {id: 1, x: 180, y: 150},
+                            {id: 2, x: 420, y: 150},
+                            {id: 3, x: 180, y: 250},
+                            {id: 4, x: 420, y: 250},
+                            {id: 5, x: 300, y: 320}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 0, to: 2, required: 1},
+                            {from: 1, to: 3, required: 1},
+                            {from: 2, to: 4, required: 1},
+                            {from: 3, to: 5, required: 1},
+                            {from: 4, to: 5, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 3, to: 4, required: 2}, // 红线
+                            {from: 0, to: 5, required: 2}  // 红线
+                        ],
+                        hint: '钻石形结构，红线需要巧妙的顺序！',
+                        name: '钻石谜题'
+                    },
+
+                    // 关卡 9: 高难度
+                    {
+                        nodes: [
+                            {id: 0, x: 150, y: 150},
+                            {id: 1, x: 300, y: 100},
+                            {id: 2, x: 450, y: 150},
+                            {id: 3, x: 150, y: 250},
+                            {id: 4, x: 300, y: 300},
+                            {id: 5, x: 450, y: 250}
+                        ],
+                        edges: [
+                            {from: 0, to: 1, required: 1},
+                            {from: 1, to: 2, required: 1},
+                            {from: 3, to: 4, required: 1},
+                            {from: 4, to: 5, required: 1},
+                            {from: 0, to: 3, required: 1},
+                            {from: 2, to: 5, required: 1},
+                            {from: 1, to: 4, required: 2}, // 红线
+                            {from: 0, to: 5, required: 2}, // 红线
+                            {from: 2, to: 3, required: 2}  // 红线
+                        ],
+                        hint: '三红线对称，找到正确的起点！',
+                        name: '三线对称'
+                    },
+
+                    // 关卡 10: 终极挑战
+                    {
+                        nodes: [
+                            {id: 0, x: 200, y: 100},
+                            {id: 1, x: 400, y: 100},
+                            {id: 2, x: 150, y: 200},
+                            {id: 3, x: 300, y: 200},
+                            {id: 4, x: 450, y: 200},
+                            {id: 5, x: 200, y: 300},
+                            {id: 6, x: 400, y: 300}
+                        ],
+                        edges: [
+                            {from: 0, to: 2, required: 1},
+                            {from: 0, to: 3, required: 1},
+                            {from: 1, to: 3, required: 1},
+                            {from: 1, to: 4, required: 1},
+                            {from: 2, to: 3, required: 2}, // 红线
+                            {from: 3, to: 4, required: 2}, // 红线
+                            {from: 2, to: 5, required: 1},
+                            {from: 3, to: 5, required: 1},
+                            {from: 3, to: 6, required: 1},
+                            {from: 4, to: 6, required: 1},
+                            {from: 5, to: 6, required: 2}  // 红线
+                        ],
+                        hint: '从左上方开始，先处理左边的红线，注意中心点的连接！',
+                        name: '终极挑战'
+                    }
+                ];
+            }
+
+            setupCanvas() {
+                const rect = this.canvas.getBoundingClientRect();
+                this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseup', () => this.handleMouseUp());
+                this.canvas.addEventListener('mouseleave', () => this.handleMouseUp());
+            }
+
+            setupEventListeners() {
+                // 阻止右键菜单
+                this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+                // 更新总关卡数
+                document.getElementById('totalLevels').textContent = this.levels.length;
+            }
+
+            setupRatingSystem() {
+                const stars = document.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.addEventListener('click', (e) => {
+                        this.userRating = parseInt(e.target.dataset.rating);
+                        this.highlightStars(this.userRating);
+                        document.getElementById('submitRatingBtn').disabled = false;
+                    });
+
+                    star.addEventListener('mouseenter', (e) => {
+                        const hoverRating = parseInt(e.target.dataset.rating);
+                        this.highlightStars(hoverRating);
+                    });
+                });
+
+                // 鼠标离开评分区域时恢复当前评分
+                document.getElementById('starsContainer').addEventListener('mouseleave', () => {
+                    this.highlightStars(this.userRating);
+                });
+            }
+
+            highlightStars(rating) {
+                const stars = document.querySelectorAll('.star');
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+
+            getMousePos(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
+            getNodeAt(pos) {
+                const level = this.levels[this.currentLevel];
+                for (let node of level.nodes) {
+                    const dx = pos.x - node.x;
+                    const dy = pos.y - node.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 25) { // 节点半径25px
+                        return node;
+                    }
+                }
+                return null;
+            }
+
+            getEdgeBetween(node1, node2) {
+                const level = this.levels[this.currentLevel];
+                for (let edge of level.edges) {
+                    if ((edge.from === node1.id && edge.to === node2.id) ||
+                        (edge.from === node2.id && edge.to === node1.id)) {
+                        return edge;
+                    }
+                }
+                return null;
+            }
+
+            handleMouseDown(e) {
+                const pos = this.getMousePos(e);
+                const node = this.getNodeAt(pos);
+
+                if (node) {
+                    this.isDrawing = true;
+                    if (this.currentPath.length === 0 || this.currentPath[this.currentPath.length - 1] !== node.id) {
+                        this.currentPath.push(node.id);
+                        this.updateEdgeStates();
+                        this.showMessage('');
+                    }
+                }
+            }
+
+            handleMouseMove(e) {
+                if (!this.isDrawing || this.currentPath.length === 0) return;
+
+                const pos = this.getMousePos(e);
+                const node = this.getNodeAt(pos);
+
+                if (node && this.currentPath[this.currentPath.length - 1] !== node.id) {
+                    const lastNodeId = this.currentPath[this.currentPath.length - 1];
+                    const edge = this.getEdgeBetween(
+                        {id: lastNodeId},
+                        node
+                    );
+
+                    if (edge) {
+                        const edgeKey = this.getEdgeKey(edge);
+                        const currentCount = this.edgeStates.get(edgeKey) || 0;
+
+                        if (currentCount < edge.required) {
+                            this.currentPath.push(node.id);
+                            this.updateEdgeStates();
+                            this.showMessage('');
+                        } else {
+                            this.showMessage('这条线已经画完了！', 'error');
+                        }
+                    }
+                }
+
+                this.draw();
+            }
+
+            handleMouseUp() {
+                this.isDrawing = false;
+                this.draw();
+            }
+
+            getEdgeKey(edge) {
+                return `${Math.min(edge.from, edge.to)}-${Math.max(edge.from, edge.to)}`;
+            }
+
+            updateEdgeStates() {
+                this.edgeStates.clear();
+
+                for (let i = 0; i < this.currentPath.length - 1; i++) {
+                    const node1 = this.currentPath[i];
+                    const node2 = this.currentPath[i + 1];
+                    const edge = this.getEdgeBetween({id: node1}, {id: node2});
+
+                    if (edge) {
+                        const edgeKey = this.getEdgeKey(edge);
+                        const count = this.edgeStates.get(edgeKey) || 0;
+                        this.edgeStates.set(edgeKey, count + 1);
+                    }
+                }
+
+                this.checkWinCondition();
+            }
+
+            checkWinCondition() {
+                const level = this.levels[this.currentLevel];
+                let allEdgesComplete = true;
+
+                for (let edge of level.edges) {
+                    const edgeKey = this.getEdgeKey(edge);
+                    const count = this.edgeStates.get(edgeKey) || 0;
+
+                    if (count !== edge.required) {
+                        allEdgesComplete = false;
+                        break;
+                    }
+                }
+
+                if (allEdgesComplete) {
+                    // 显示通关消息
+                    this.showMessage(`🎉 恭喜你通关！${level.name}完成！`, 'success');
+                    document.getElementById('nextBtn').disabled = false;
+
+                    // 如果是最后一关，显示评分弹窗
+                    if (this.currentLevel === this.levels.length - 1 && !this.hasShownRatingModal) {
+                        setTimeout(() => {
+                            this.showRatingModal();
+                        }, 500); // 延迟显示，让玩家看到通关消息
+                    }
+                }
+            }
+
+            showRatingModal() {
+                this.hasShownRatingModal = true;
+                document.getElementById('ratingModal').style.display = 'block';
+            }
+
+            hideRatingModal() {
+                document.getElementById('ratingModal').style.display = 'none';
+            }
+
+            submitRating() {
+                if (this.userRating === 0) {
+                    alert('请先选择评分！');
+                    return;
+                }
+
+                const comment = document.getElementById('commentText').value.trim();
+
+                // 保存评分到本地存储（因为浏览器环境无法直接写入文件）
+                try {
+                    const ratingData = {
+                        timestamp: new Date().toISOString(),
+                        rating: this.userRating,
+                        comment: comment,
+                        level: this.currentLevel + 1
+                    };
+
+                    // 获取现有评分数据
+                    let ratings = JSON.parse(localStorage.getItem('gameRatings') || '[]');
+                    ratings.push(ratingData);
+
+                    // 保存到本地存储
+                    localStorage.setItem('gameRatings', JSON.stringify(ratings));
+
+                    // 也尝试保存到文件（浏览器限制可能不成功）
+                    this.saveRatingToFile(ratingData);
+
+                    alert(`感谢您的 ${this.userRating} 星评分！`);
+                    this.hideRatingModal();
+                } catch (error) {
+                    console.error('保存评分失败:', error);
+                    alert('评分保存成功（存储在浏览器中）！');
+                    this.hideRatingModal();
+                }
+            }
+
+            skipRating() {
+                this.hideRatingModal();
+            }
+
+            saveRatingToFile(ratingData) {
+                // 创建可下载的JSON文件（浏览器环境）
+                const dataStr = JSON.stringify(ratingData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+
+                // 创建一个下载链接
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `rating_${new Date().getTime()}.json`;
+                link.style.display = 'none';
+
+                // 添加到DOM并触发下载
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // 释放URL对象
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            }
+
+            loadLevel() {
+                this.currentPath = [];
+                this.edgeStates.clear();
+                document.getElementById('currentLevel').textContent = this.currentLevel + 1;
+
+                // 更新按钮状态
+                document.getElementById('prevBtn').disabled = this.currentLevel === 0;
+                document.getElementById('nextBtn').disabled = true;
+
+                this.showMessage('');
+                this.hideHint();
+                this.draw();
+            }
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                const level = this.levels[this.currentLevel];
+
+                // 绘制边
+                for (let edge of level.edges) {
+                    const fromNode = level.nodes.find(n => n.id === edge.from);
+                    const toNode = level.nodes.find(n => n.id === edge.to);
+
+                    const edgeKey = this.getEdgeKey(edge);
+                    const completedCount = this.edgeStates.get(edgeKey) || 0;
+
+                    // 绘制未完成的线条（灰色）
+                    if (completedCount < edge.required) {
+                        this.ctx.strokeStyle = '#e2e8f0';
+                        this.ctx.lineWidth = 8;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(fromNode.x, fromNode.y);
+                        this.ctx.lineTo(toNode.x, toNode.y);
+                        this.ctx.stroke();
+                    }
+
+                    // 绘制已完成的线条
+                    if (completedCount > 0) {
+                        this.ctx.strokeStyle = edge.required === 2 ? '#e53e3e' : '#4a5568';
+                        this.ctx.lineWidth = 8;
+                        this.ctx.lineCap = 'round';
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(fromNode.x, fromNode.y);
+                        this.ctx.lineTo(toNode.x, toNode.y);
+                        this.ctx.stroke();
+
+                        // 如果是需要画两次的线，画一条虚线表示还需要画
+                        if (edge.required === 2 && completedCount === 1) {
+                            this.ctx.strokeStyle = 'rgba(229, 62, 62, 0.3)';
+                            this.ctx.lineWidth = 4;
+                            this.ctx.setLineDash([5, 5]);
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(fromNode.x, fromNode.y);
+                            this.ctx.lineTo(toNode.x, toNode.y);
+                            this.ctx.stroke();
+                            this.ctx.setLineDash([]);
+                        }
+                    }
+                }
+
+                // 绘制当前绘制路径
+                if (this.currentPath.length > 1) {
+                    this.ctx.strokeStyle = '#667eea';
+                    this.ctx.lineWidth = 6;
+                    this.ctx.lineCap = 'round';
+                    this.ctx.beginPath();
+
+                    for (let i = 0; i < this.currentPath.length; i++) {
+                        const node = level.nodes.find(n => n.id === this.currentPath[i]);
+                        if (i === 0) {
+                            this.ctx.moveTo(node.x, node.y);
+                        } else {
+                            this.ctx.lineTo(node.x, node.y);
+                        }
+                    }
+
+                    // 如果正在绘制，绘制到鼠标位置的虚线
+                    if (this.isDrawing && this.currentPath.length > 0) {
+                        this.ctx.lineTo(this.lastMousePos?.x || level.nodes[0].x, this.lastMousePos?.y || level.nodes[0].y);
+                    }
+
+                    this.ctx.stroke();
+                }
+
+                // 绘制节点
+                for (let node of level.nodes) {
+                    // 节点圆圈
+                    this.ctx.fillStyle = this.currentPath.includes(node.id) ? '#667eea' : '#cbd5e0';
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+                    this.ctx.fill();
+
+                    // 节点边框
+                    this.ctx.strokeStyle = '#4a5568';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+                    this.ctx.stroke();
+
+                    // 节点ID
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.font = 'bold 14px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(node.id, node.x, node.y);
+                }
+            }
+
+            showMessage(text, type = '') {
+                const messageEl = document.getElementById('message');
+                messageEl.textContent = text;
+                messageEl.className = `message ${type}`;
+            }
+
+            hint() {
+                const level = this.levels[this.currentLevel];
+                document.getElementById('hintText').textContent = level.hint;
+                document.getElementById('hintBox').style.display = 'block';
+            }
+
+            hideHint() {
+                document.getElementById('hintBox').style.display = 'none';
+            }
+
+            resetLevel() {
+                this.currentPath = [];
+                this.edgeStates.clear();
+                this.isDrawing = false;
+                this.showMessage('');
+                this.hideHint();
+                this.draw();
+            }
+
+            nextLevel() {
+                if (this.currentLevel < this.levels.length - 1) {
+                    this.currentLevel++;
+                    this.loadLevel();
+                }
+            }
+
+            prevLevel() {
+                if (this.currentLevel > 0) {
+                    this.currentLevel--;
+                    this.loadLevel();
+                }
+            }
+        }
+
+        // 启动游戏
+        const game = new OneStrokeGame();
+
+        // 鼠标移动跟踪
+        document.getElementById('gameCanvas').addEventListener('mousemove', (e) => {
+            const rect = game.canvas.getBoundingClientRect();
+            game.lastMousePos = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        });
+    </script>
+</body>
+</html>

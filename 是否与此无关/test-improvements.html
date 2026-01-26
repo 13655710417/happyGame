@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏逻辑测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-case { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .pass { background: #d4edda; }
+        .fail { background: #f8d7da; }
+        .result { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>游戏逻辑改进测试</h1>
+    <p>测试改进后的问答系统逻辑</p>
+
+    <div id="tests">
+        <div class="test-case">
+            <h3>测试1：直接匹配预设问题</h3>
+            <p>问题："这个男人认识酒保吗？"</p>
+            <p>预期答案："否"</p>
+            <div class="result" id="test1">等待测试...</div>
+        </div>
+
+        <div class="test-case">
+            <h3>测试2：关键词匹配（健康相关）</h3>
+            <p>问题："这个男人生病了吗？"</p>
+            <p>预期答案：应该是"是"或"可能是"</p>
+            <div class="result" id="test2">等待测试...</div>
+        </div>
+
+        <div class="test-case">
+            <h3>测试3：间接相关问题</h3>
+            <p>问题："这个男人为什么点水？"</p>
+            <p>预期答案：不应是"与此无关"，应该是提示或"可能有关"</p>
+            <div class="result" id="test3">等待测试...</div>
+        </div>
+
+        <div class="test-case">
+            <h3>测试4：明显无关问题</h3>
+            <p>问题："今天是星期几？"</p>
+            <p>预期答案："与此无关"</p>
+            <div class="result" id="test4">等待测试...</div>
+        </div>
+
+        <div class="test-case">
+            <h3>测试5：同义词测试</h3>
+            <p>问题："这个男人有疾病吗？"（使用同义词"疾病"而不是"健康问题"）</p>
+            <p>预期答案：应该是"是"或"可能是"</p>
+            <div class="result" id="test5">等待测试...</div>
+        </div>
+    </div>
+
+    <script>
+        // 导入游戏逻辑（简化版）
+        const GameState = {
+            stories: [
+                {
+                    id: 1,
+                    fragment: "一个男人走进一家酒吧，点了一杯水。酒保看了他一眼，然后从柜台下拿出一把枪。男人说了声'谢谢'就走了出去。",
+                    fullStory: "这个男人一直打嗝，他听说突然的惊吓可以治愈打嗝。他走进酒吧点了一杯水，希望酒保会做点什么来吓唬他。酒保明白了他的意图，从柜台下拿出一把枪指向他。男人被吓到，打嗝停止了，于是他说了声'谢谢'就走了出去。",
+                    keywords: ["打嗝", "惊吓", "治愈", "枪", "意图", "明白", "健康", "问题", "疾病", "生病", "治疗", "吓唬", "害怕", "恐怖", "手枪", "武器", "帮助", "协助", "目的", "原因", "动机", "为什么", "水", "喝水", "口渴", "酒吧", "酒馆"],
+                    questions: [
+                        { question: "这个男人认识酒保吗？", answer: "否" },
+                        { question: "这个男人有什么健康问题吗？", answer: "是" },
+                        { question: "酒保想伤害这个男人吗？", answer: "否" },
+                        { question: "这把枪是真的吗？", answer: "与此无关" },
+                        { question: "这个男人点水是为了喝吗？", answer: "否" },
+                        { question: "酒保拿出枪是为了吓唬这个男人吗？", answer: "是" },
+                        { question: "这个男人离开是因为害怕吗？", answer: "否" },
+                        { question: "这个男人打嗝吗？", answer: "是" }
+                    ]
+                }
+            ],
+            currentStoryIndex: 0
+        };
+
+        // 复制游戏逻辑中的关键函数
+        function getCoreElementsForStory(storyId) {
+            const coreElements = {
+                1: ['男人', '酒吧', '酒保', '水', '枪', '谢谢', '走出', '离开'],
+                2: ['女人', '沙漠', '水', '瓶子', '打开', '喝', '倒掉'],
+                3: ['男人', '报纸', '阅读', '大笑', '哭', '哭泣']
+            };
+            return coreElements[storyId] || [];
+        }
+
+        function analyzeQuestionType(question, story) {
+            // 检查是否包含故事的关键词
+            let hasKeyword = false;
+            for (const keyword of story.keywords) {
+                if (question.includes(keyword.toLowerCase())) {
+                    hasKeyword = true;
+                    break;
+                }
+            }
+
+            // 检查问题是否涉及故事的核心元素
+            const coreElements = getCoreElementsForStory(story.id);
+            let hasCoreElement = false;
+            for (const element of coreElements) {
+                if (question.includes(element)) {
+                    hasCoreElement = true;
+                    break;
+                }
+            }
+
+            // 检查问题是否明显无关
+            const unrelatedPatterns = ['星期', '日期', '时间', '天气', '颜色', '数字', '年龄', '身高', '体重'];
+            let isUnrelated = false;
+            for (const pattern of unrelatedPatterns) {
+                if (question.includes(pattern)) {
+                    isUnrelated = true;
+                    break;
+                }
+            }
+
+            if (isUnrelated) {
+                return 'unrelated';
+            } else if (hasKeyword || hasCoreElement) {
+                return 'direct';
+            } else {
+                // 检查问题是否可能相关（通过常见的问题模式）
+                const questionPatterns = ['为什么', '怎么样', '是否', '有没有', '是不是', '能否', '会不会'];
+                for (const pattern of questionPatterns) {
+                    if (question.includes(pattern)) {
+                        return 'indirect';
+                    }
+                }
+                return 'unrelated';
+            }
+        }
+
+        function getDirectAnswer(question, story) {
+            // 尝试根据问题内容给出合理答案
+            const storyId = story.id;
+
+            if (storyId === 1) {
+                // 第一个故事：打嗝的男人
+                if (question.includes('健康') || question.includes('生病') || question.includes('疾病')) {
+                    return Math.random() > 0.3 ? '是' : '可能有关';
+                }
+                if (question.includes('害怕') || question.includes('恐怖') || question.includes('吓到')) {
+                    return Math.random() > 0.4 ? '是' : '可能有关';
+                }
+                if (question.includes('认识') || question.includes('熟悉') || question.includes('朋友')) {
+                    return '否';
+                }
+                if (question.includes('伤害') || question.includes('攻击') || question.includes('杀死')) {
+                    return '否';
+                }
+                if (question.includes('喝水') || question.includes('口渴') || question.includes('饮用')) {
+                    return '否';
+                }
+                if (question.includes('帮助') || question.includes('协助') || question.includes('治疗')) {
+                    return '是';
+                }
+            }
+
+            // 默认：根据关键词给出合理推断
+            const positiveKeywords = ['帮助', '治疗', '治愈', '有趣', '好笑', '幽默', '口渴', '认识'];
+            const negativeKeywords = ['伤害', '攻击', '杀死', '浪费', '污染', '有毒'];
+
+            for (const keyword of positiveKeywords) {
+                if (question.includes(keyword)) {
+                    return Math.random() > 0.3 ? '是' : '可能有关';
+                }
+            }
+
+            for (const keyword of negativeKeywords) {
+                if (question.includes(keyword)) {
+                    return Math.random() > 0.3 ? '否' : '可能有关';
+                }
+            }
+
+            // 如果无法确定，返回"可能有关"而不是"与此无关"
+            return '可能有关';
+        }
+
+        function getIndirectAnswer(question, story) {
+            // 对于间接问题，给出提示而不是直接答案
+            const prompts = [
+                '这个问题可能需要从另一个角度思考',
+                '试着关注故事中的异常细节',
+                '考虑角色的动机可能是什么',
+                '也许这个问题与故事的核心谜题有关',
+                '继续探索，你离真相更近了'
+            ];
+
+            // 随机返回一个提示，但有时也给出直接答案
+            if (Math.random() > 0.5) {
+                return Math.random() > 0.5 ? '可能是' : '可能不是';
+            } else {
+                return prompts[Math.floor(Math.random() * prompts.length)];
+            }
+        }
+
+        function getAnswerForQuestion(question) {
+            const currentStory = GameState.stories[GameState.currentStoryIndex];
+
+            // 首先检查预定义的问题（完全匹配）
+            for (const q of currentStory.questions) {
+                if (question.toLowerCase() === q.question.toLowerCase()) {
+                    return q.answer;
+                }
+            }
+
+            const lowerQuestion = question.toLowerCase();
+
+            // 检查问题类型和相关性
+            const questionType = analyzeQuestionType(lowerQuestion, currentStory);
+
+            // 根据问题类型返回相应的答案
+            switch (questionType) {
+                case 'direct':
+                    // 直接相关的问题，尝试根据关键词给出合理答案
+                    return getDirectAnswer(lowerQuestion, currentStory);
+                case 'indirect':
+                    // 间接相关的问题，给出提示性答案
+                    return getIndirectAnswer(lowerQuestion, currentStory);
+                case 'unrelated':
+                    // 完全无关的问题
+                    return '与此无关';
+                default:
+                    // 无法确定，保守起见返回"与此无关"
+                    return '与此无关';
+            }
+        }
+
+        // 运行测试
+        function runTest(question, expectedBehavior, testId) {
+            const answer = getAnswerForQuestion(question);
+            const resultElement = document.getElementById(testId);
+
+            let passed = false;
+            let message = `答案: "${answer}" - `;
+
+            if (expectedBehavior === "应该是'是'或'可能是'") {
+                passed = answer === '是' || answer === '可能是' || answer === '可能有关';
+                message += passed ? "✓ 符合预期" : "✗ 不符合预期";
+            } else if (expectedBehavior === "不应是'与此无关'，应该是提示或'可能有关'") {
+                passed = answer !== '与此无关';
+                message += passed ? "✓ 不是'与此无关'" : "✗ 返回了'与此无关'";
+            } else if (expectedBehavior === "'与此无关'") {
+                passed = answer === '与此无关';
+                message += passed ? "✓ 正确返回'与此无关'" : "✗ 不应该返回'" + answer + "'";
+            } else if (expectedBehavior === "'否'") {
+                passed = answer === '否';
+                message += passed ? "✓ 正确返回'否'" : "✗ 返回了'" + answer + "'而不是'否'";
+            }
+
+            resultElement.textContent = message;
+            resultElement.parentElement.className = passed ? 'test-case pass' : 'test-case fail';
+        }
+
+        // 执行所有测试
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                runTest("这个男人认识酒保吗？", "'否'", "test1");
+                runTest("这个男人生病了吗？", "应该是'是'或'可能是'", "test2");
+                runTest("这个男人为什么点水？", "不应是'与此无关'，应该是提示或'可能有关'", "test3");
+                runTest("今天是星期几？", "'与此无关'", "test4");
+                runTest("这个男人有疾病吗？", "应该是'是'或'可能是'", "test5");
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简约数独 | 经典与连续模式</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-th"></i> 简约数独</h1>
+            <p class="subtitle">经典模式与连续数独挑战</p>
+        </header>
+
+        <main class="main-content">
+            <!-- 主页：模式选择 -->
+            <div id="home-screen" class="screen home-screen active">
+                <h2><i class="fas fa-th-large"></i> 选择游戏模式</h2>
+                <p class="subtitle">请选择您想要挑战的数独类型</p>
+
+                <div class="mode-selection">
+                    <div class="mode-option" data-mode="classic">
+                        <h3><i class="fas fa-grid"></i> 经典数独</h3>
+                        <p>传统的9×9数独，挑战您的逻辑推理能力</p>
+                        <ul class="mode-features">
+                            <li><i class="fas fa-check-circle"></i> 三种难度：中等、困难、大师</li>
+                            <li><i class="fas fa-check-circle"></i> 困难难度约25个已知数字</li>
+                            <li><i class="fas fa-check-circle"></i> 大师难度需假设推理</li>
+                            <li><i class="fas fa-check-circle"></i> 标准数独规则</li>
+                        </ul>
+                    </div>
+
+                    <div class="mode-option" data-mode="continuous">
+                        <h3><i class="fas fa-infinity"></i> 连续数独</h3>
+                        <p>特殊变体，相邻单元格数字必须连续</p>
+                        <ul class="mode-features">
+                            <li><i class="fas fa-check-circle"></i> 两种难度：困难、大师</li>
+                            <li><i class="fas fa-check-circle"></i> 相邻数字差必须为1</li>
+                            <li><i class="fas fa-check-circle"></i> 灰色粗线标记连续性</li>
+                            <li><i class="fas fa-check-circle"></i> 额外约束增加挑战性</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button id="continue-btn" class="nav-btn primary" disabled>
+                        <i class="fas fa-arrow-right"></i> 继续选择难度
+                    </button>
+                </div>
+            </div>
+
+            <!-- 难度选择屏幕 -->
+            <div id="difficulty-screen" class="screen difficulty-screen">
+                <h2><i class="fas fa-chart-line"></i> 选择难度</h2>
+                <p class="subtitle" id="difficulty-subtitle">为<span id="selected-mode">经典数独</span>选择难度</p>
+
+                <div class="difficulty-options" id="difficulty-options">
+                    <!-- 难度选项将通过JavaScript动态生成 -->
+                </div>
+
+                <div class="nav-buttons">
+                    <button id="back-to-mode-btn" class="nav-btn secondary">
+                        <i class="fas fa-arrow-left"></i> 返回选择模式
+                    </button>
+                    <button id="start-game-btn" class="nav-btn primary">
+                        <i class="fas fa-play"></i> 开始游戏
+                    </button>
+                </div>
+            </div>
+
+            <!-- 游戏屏幕 -->
+            <div id="game-screen" class="screen">
+                <div class="game-controls">
+                    <div class="mode-info">
+                        <h3><i class="fas fa-gamepad"></i> 当前模式: <span id="current-mode-display">经典数独</span></h3>
+                        <h3><i class="fas fa-chart-line"></i> 难度: <span id="current-difficulty-display">困难</span></h3>
+                    </div>
+
+                    <div class="game-actions">
+                        <button id="new-game-btn" class="action-btn primary">
+                            <i class="fas fa-plus-circle"></i> 新游戏
+                        </button>
+                        <button id="hint-btn" class="action-btn secondary">
+                            <i class="fas fa-lightbulb"></i> 提示 (3)
+                        </button>
+                        <button id="check-btn" class="action-btn secondary">
+                            <i class="fas fa-check-circle"></i> 检查
+                        </button>
+                        <button id="solve-btn" class="action-btn secondary">
+                            <i class="fas fa-brain"></i> 求解
+                        </button>
+                        <button id="back-to-menu-btn" class="action-btn secondary">
+                            <i class="fas fa-home"></i> 返回主菜单
+                        </button>
+                    </div>
+
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-label"><i class="far fa-clock"></i> 时间:</span>
+                            <span id="timer">00:00</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label"><i class="fas fa-bolt"></i> 提示剩余:</span>
+                            <span id="hints-left">3</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label"><i class="fas fa-heart"></i> 体力:</span>
+                            <span id="energy-left">4</span>
+                        </div>
+                        <div class="stat continuous-only hidden">
+                            <span class="stat-label"><i class="fas fa-list-ol"></i> 连续进度:</span>
+                            <span id="continuous-progress">1/5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-area">
+                    <div class="sudoku-container">
+                        <div class="sudoku-grid" id="sudoku-grid">
+                            <!-- 数独格子将通过JavaScript动态生成 -->
+                        </div>
+                        <div class="number-selector">
+                            <button class="number-btn" data-number="1">1</button>
+                            <button class="number-btn" data-number="2">2</button>
+                            <button class="number-btn" data-number="3">3</button>
+                            <button class="number-btn" data-number="4">4</button>
+                            <button class="number-btn" data-number="5">5</button>
+                            <button class="number-btn" data-number="6">6</button>
+                            <button class="number-btn" data-number="7">7</button>
+                            <button class="number-btn" data-number="8">8</button>
+                            <button class="number-btn" data-number="9">9</button>
+                            <button class="number-btn clear" data-number="0">
+                                <i class="fas fa-eraser"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="instructions">
+                        <div class="instructions-content">
+                            <h3><i class="fas fa-info-circle"></i> 游戏说明</h3>
+                            <div id="classic-instructions">
+                                <p><strong>经典数独规则:</strong></p>
+                                <ul>
+                                    <li>每个3×3宫、每一行、每一列都包含1-9的数字，且不重复</li>
+                                    <li><strong>中等:</strong> 约35个已知数字，适合初学者</li>
+                                    <li><strong>困难:</strong> 约25个已知数字，需要逻辑推理</li>
+                                    <li><strong>大师:</strong> 需假设推理，难度在困难与大师之间</li>
+                                </ul>
+                                <p><em>提示：大师难度可能需要尝试性假设并验证。</em></p>
+                            </div>
+                            <div id="continuous-instructions" class="hidden">
+                                <p><strong>连续数独玩法:</strong></p>
+                                <ul>
+                                    <li>一种特殊数独变体，相邻格子间有额外限制</li>
+                                    <li>相邻单元格之间如果有灰色粗线，则数字必须是连续的（差值为1）</li>
+                                    <li>棋盘上会有灰色粗线标记表示相邻数字的连续性</li>
+                                    <li>灰色粗线表示相邻两个数字必须连续（如1-2或2-1）</li>
+                                    <li>没有灰色粗线的相邻单元格之间没有连续性要求</li>
+                                    <li><strong>困难:</strong> 约30个已知数字和连续性标记</li>
+                                    <li><strong>大师:</strong> 约20个已知数字和连续性标记，需假设推理</li>
+                                </ul>
+                                <p><em>提示：同时满足标准数独规则和连续性约束。</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>简约数独游戏 &copy; 2026 | 设计：简约大气 | 挑战你的逻辑思维</p>
+            <div class="footer-links">
+                <a href="#" id="rules-link"><i class="fas fa-book"></i> 详细规则</a>
+                <a href="#" id="about-link"><i class="fas fa-user"></i> 关于</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 模态框：游戏规则 -->
+    <div id="rules-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-book-open"></i> 数独游戏规则详解</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rules-section">
+                    <h3><i class="fas fa-th"></i> 经典数独</h3>
+                    <p>标准数独棋盘为9×9网格，被划分为9个3×3的宫。</p>
+                    <p><strong>基本规则:</strong></p>
+                    <ol>
+                        <li>每行必须包含数字1-9，且不重复</li>
+                        <li>每列必须包含数字1-9，且不重复</li>
+                        <li>每个3×3宫必须包含数字1-9，且不重复</li>
+                    </ol>
+                    <p><strong>难度说明:</strong></p>
+                    <ul>
+                        <li><strong>中等:</strong> 约35个已知数字，使用基础技巧即可解决</li>
+                        <li><strong>困难:</strong> 约25个已知数字，需要中级技巧如唯余数、区块排除</li>
+                        <li><strong>大师:</strong> 需假设推理，使用高级技巧如X-Wing、剑鱼等，或尝试性假设</li>
+                    </ul>
+                </div>
+                <div class="rules-section">
+                    <h3><i class="fas fa-infinity"></i> 连续数独</h3>
+                    <p>连续数独（Continuous Sudoku）是一种特殊数独变体，也称为"连续邻接数独"。</p>
+                    <p><strong>基本规则:</strong></p>
+                    <ol>
+                        <li>遵循标准数独的所有规则</li>
+                        <li>相邻单元格（上下左右）之间如果有灰色粗线标记，则必须满足连续性条件</li>
+                        <li>灰色粗线表示相邻两个数字必须是连续的（差值为1）</li>
+                        <li>没有灰色粗线的相邻单元格之间没有连续性要求</li>
+                        <li>连续数字对包括：1-2, 2-3, 3-4, 4-5, 5-6, 6-7, 7-8, 8-9</li>
+                    </ol>
+                    <p><strong>示例:</strong></p>
+                    <ul>
+                        <li>两个相邻单元格之间有灰色粗线：它们的数字差必须为1</li>
+                        <li>如1-2, 2-3, 3-4等连续数字对</li>
+                        <li>方向不重要，只要差值为1即可</li>
+                    </ul>
+                    <p><strong>难度说明:</strong></p>
+                    <ul>
+                        <li><strong>困难:</strong> 约30个已知数字和连续性标记，需要基础推理</li>
+                        <li><strong>大师:</strong> 约20个已知数字和连续性标记，需要高级技巧和假设推理</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框：关于 -->
+    <div id="about-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> 关于简约数独</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>简约数独是一款设计简约大气的数独游戏，专注于提供纯粹的逻辑挑战体验。</p>
+                <p><strong>特性:</strong></p>
+                <ul>
+                    <li>三种经典难度：中等、困难、大师</li>
+                    <li>创新的连续数独模式</li>
+                    <li>响应式设计，可在多种设备上游戏</li>
+                    <li>直观的界面和流畅的交互</li>
+                    <li>提示和检查功能帮助学习</li>
+                </ul>
+                <p>游戏完全使用HTML、CSS和JavaScript构建，无需插件或下载。</p>
+                <p>设计理念：简约而不简单，挑战你的逻辑思维极限。</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

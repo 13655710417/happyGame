@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tao出个游戏 - 动漫风格小游戏平台</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <!-- 星空背景 -->
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>tao出个游戏</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#games" class="nav-link"><i class="fas fa-dice"></i> 游戏大厅</a>
+                <a href="#about" class="nav-link"><i class="fas fa-info-circle"></i> 关于平台</a>
+                <a href="#feedback" class="nav-link"><i class="fas fa-comment-dots"></i> 留言板</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-text animate__animated animate__fadeInUp">
+                <h2>欢迎来到<span class="highlight">tao出个游戏</span></h2>
+                <p class="subtitle">一个充满乐趣的动漫风格小游戏集合</p>
+                <p class="description">在这里，你可以体验各种有趣的小游戏，放松心情，挑战自我！</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <i class="fas fa-gamepad"></i>
+                        <span>4款游戏</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-users"></i>
+                        <span>免费畅玩</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-heart"></i>
+                        <span>持续更新</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image animate__animated animate__fadeInRight">
+                <div class="character-container">
+                    <div class="character">
+                        <div class="character-head"></div>
+                        <div class="character-body"></div>
+                        <div class="character-arm left"></div>
+                        <div class="character-arm right"></div>
+                        <div class="character-leg left"></div>
+                        <div class="character-leg right"></div>
+                    </div>
+                    <div class="game-icons">
+                        <div class="icon puzzle"><i class="fas fa-puzzle-piece"></i></div>
+                        <div class="icon brain"><i class="fas fa-brain"></i></div>
+                        <div class="icon sheep"><i class="fas fa-paw"></i></div>
+                        <div class="icon pen"><i class="fas fa-pen"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <!-- 游戏大厅 -->
+    <section class="games-section" id="games">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-dice"></i> 游戏大厅</h2>
+                <p class="section-subtitle">选择你喜欢的游戏开始冒险吧！</p>
+            </div>
+
+            <div class="games-grid">
+                <!-- 是否与此无关 -->
+                <div class="game-card animate__animated" data-game="story">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>是否与此无关</h3>
+                        <span class="game-tag puzzle-tag">推理</span>
+                    </div>
+                    <div class="game-card-body">
+                        <p class="game-description">海龟汤风格的推理游戏，通过提问还原完整故事，考验你的逻辑思维和想象力。</p>
+                        <div class="game-features">
+                            <span><i class="fas fa-book"></i> 多个故事</span>
+                            <span><i class="fas fa-lightbulb"></i> 关键词匹配</span>
+                            <span><i class="fas fa-mobile-alt"></i> 响应式设计</span>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="是否与此无关/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 数独 -->
+                <div class="game-card animate__animated" data-game="sudoku">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-th"></i>
+                        </div>
+                        <h3>数独</h3>
+                        <span class="game-tag logic-tag">逻辑</span>
+                    </div>
+                    <div class="game-card-body">
+                        <p class="game-description">经典数独游戏，包含经典模式和连续数独变体，锻炼你的逻辑思维和专注力。</p>
+                        <div class="game-features">
+                            <span><i class="fas fa-keyboard"></i> 键盘支持</span>
+                            <span><i class="fas fa-lightbulb"></i> 提示系统</span>
+                            <span><i class="fas fa-stopwatch"></i> 计时器</span>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="数独/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 羊了个羊 -->
+                <div class="game-card animate__animated" data-game="sheep">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-sheep"></i>
+                        </div>
+                        <h3>羊了个羊</h3>
+                        <span class="game-tag casual-tag">休闲</span>
+                    </div>
+                    <div class="game-card-body">
+                        <p class="game-description">羊羊消除游戏，类似羊了个羊的玩法，轻松休闲，适合放松心情。</p>
+                        <div class="game-features">
+                            <span><i class="fas fa-redo"></i> 复活机制</span>
+                            <span><i class="fas fa-random"></i> 洗牌功能</span>
+                            <span><i class="fas fa-undo"></i> 撤销操作</span>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="羊了个羊/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一笔画 -->
+                <div class="game-card animate__animated" data-game="draw">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-pen-nib"></i>
+                        </div>
+                        <h3>一笔画</h3>
+                        <span class="game-tag puzzle-tag">益智</span>
+                    </div>
+                    <div class="game-card-body">
+                        <p class="game-description">一笔画游戏，挑战你的空间思维和规划能力，一笔连接所有点。</p>
+                        <div class="game-features">
+                            <span><i class="fas fa-draw-polygon"></i> 多种关卡</span>
+                            <span><i class="fas fa-star"></i> 评分系统</span>
+                            <span><i class="fas fa-mouse-pointer"></i> 简单操作</span>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="一笔画/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于平台 -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-info-circle"></i> 关于平台</h2>
+                <p class="section-subtitle">tao出个游戏的诞生故事</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>我们的使命</h3>
+                    <p>tao出个游戏是一个专注于提供优质小游戏的平台，我们致力于为玩家带来轻松愉快的游戏体验。</p>
+
+                    <h3>平台特色</h3>
+                    <div class="features-list">
+                        <div class="feature">
+                            <i class="fas fa-palette"></i>
+                            <div>
+                                <h4>动漫风格设计</h4>
+                                <p>采用可爱的动漫风格界面，让游戏体验更加愉悦</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div>
+                                <h4>全平台适配</h4>
+                                <p>支持电脑、平板、手机等多种设备，随时随地畅玩</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-heart"></i>
+                            <div>
+                                <h4>完全免费</h4>
+                                <p>所有游戏免费提供，无需注册，点击即玩</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-comments"></i>
+                            <div>
+                                <h4>玩家互动</h4>
+                                <p>通过留言板与开发者互动，提出你的游戏想法</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="platform-stats">
+                        <div class="stat-circle">
+                            <div class="circle-progress" data-value="100">
+                                <span>100%</span>
+                            </div>
+                            <p>免费游戏</p>
+                        </div>
+                        <div class="stat-circle">
+                            <div class="circle-progress" data-value="100">
+                                <span>100%</span>
+                            </div>
+                            <p>响应式设计</p>
+                        </div>
+                        <div class="stat-circle">
+                            <div class="circle-progress" data-value="4">
+                                <span>4+</span>
+                            </div>
+                            <p>游戏数量</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 留言板 -->
+    <section class="feedback-section" id="feedback">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-comment-dots"></i> 留言板</h2>
+                <p class="section-subtitle">告诉我们你想玩什么游戏！</p>
+            </div>
+
+            <div class="feedback-container">
+                <div class="feedback-form">
+                    <h3>留下你的想法</h3>
+                    <p class="form-description">有什么想玩的游戏类型？或者对现有游戏的建议？告诉我们吧！</p>
+
+                    <form id="feedbackForm">
+                        <div class="form-group">
+                            <label for="username"><i class="fas fa-user"></i> 昵称</label>
+                            <input type="text" id="username" placeholder="请输入你的昵称" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gameSuggestion"><i class="fas fa-gamepad"></i> 游戏建议</label>
+                            <input type="text" id="gameSuggestion" placeholder="你想玩什么类型的游戏？" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message"><i class="fas fa-comment"></i> 详细描述</label>
+                            <textarea id="message" placeholder="请详细描述你的游戏想法或建议..." rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact"><i class="fas fa-envelope"></i> 联系方式（可选）</label>
+                            <input type="text" id="contact" placeholder="邮箱或微信，方便我们联系你">
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i> 发送留言
+                        </button>
+                    </form>
+                </div>
+
+                <div class="feedback-messages">
+                    <h3>最新留言</h3>
+                    <div class="messages-list" id="messagesList">
+                        <!-- 留言会通过JavaScript动态加载 -->
+                        <div class="message-item">
+                            <div class="message-header">
+                                <div class="message-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="message-info">
+                                    <h4>游戏爱好者</h4>
+                                    <span class="message-time">刚刚</span>
+                                </div>
+                            </div>
+                            <div class="message-content">
+                                <p class="message-game">建议：解谜类游戏</p>
+                                <p>希望可以添加更多解谜类游戏，比如密室逃脱或者推箱子！</p>
+                            </div>
+                        </div>
+
+                        <div class="message-item">
+                            <div class="message-header">
+                                <div class="message-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="message-info">
+                                    <h4>动漫迷</h4>
+                                    <span class="message-time">1小时前</span>
+                                </div>
+                            </div>
+                            <div class="message-content">
+                                <p class="message-game">建议：动漫主题游戏</p>
+                                <p>平台风格很棒！希望能有更多动漫主题的小游戏，比如动漫人物拼图之类的。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-info">
+                        <h4><i class="fas fa-lightbulb"></i> 开发者的话</h4>
+                        <p>我们会认真阅读每一条留言，并根据大家的建议来开发新的游戏。你的想法对我们很重要！</p>
+                        <p class="contact-info">
+                            <i class="fas fa-envelope"></i> 开发者邮箱：taogames@example.com
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>tao出个游戏</h3>
+                    <p>让游戏带来快乐</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <a href="#games"><i class="fas fa-chevron-right"></i> 游戏大厅</a>
+                    <a href="#about"><i class="fas fa-chevron-right"></i> 关于平台</a>
+                    <a href="#feedback"><i class="fas fa-chevron-right"></i> 留言板</a>
+                </div>
+
+                <div class="footer-games">
+                    <h4>所有游戏</h4>
+                    <a href="是否与此无关/index.html"><i class="fas fa-chevron-right"></i> 是否与此无关</a>
+                    <a href="数独/index.html"><i class="fas fa-chevron-right"></i> 数独</a>
+                    <a href="羊了个羊/index.html"><i class="fas fa-chevron-right"></i> 羊了个羊</a>
+                    <a href="一笔画/index.html"><i class="fas fa-chevron-right"></i> 一笔画</a>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>关注我们</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-weixin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-qq"></i></a>
+                        <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+                    </div>
+                    <p class="copyright">
+                        © 2026 tao出个游戏 版权所有<br>
+                        本平台所有游戏均为免费提供
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- 成功提示 -->
+    <div class="toast" id="successToast">
+        <i class="fas fa-check-circle"></i>
+        <span>留言发送成功！感谢你的建议！</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

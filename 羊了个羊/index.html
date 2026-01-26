@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>羊羊消除 - 羊了个羊风格游戏</title>
+    <link rel="stylesheet" href="sheep_game.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🐑 羊羊消除 🐑</h1>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <span class="stat-label">剩余卡牌:</span>
+                    <span class="stat-value" id="remaining-cards">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">复活次数:</span>
+                    <span class="stat-value" id="revive-count">2</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div class="card-layers" id="card-layers">
+                <!-- 卡片层将在这里生成 -->
+            </div>
+
+            <div class="slot-area">
+                <div class="slot-label">槽位 (7个)</div>
+                <div class="slots" id="slots">
+                    <!-- 选中的卡片将显示在这里 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button id="shuffle-btn" class="control-btn">洗牌</button>
+            <button id="undo-btn" class="control-btn">撤销</button>
+        </div>
+
+        <div class="game-over-modal" id="game-over-modal">
+            <div class="modal-content">
+                <h2 id="game-over-title">游戏结束</h2>
+                <p id="game-over-message">槽位已满，无法继续游戏！</p>
+                <div class="modal-buttons">
+                    <button id="revive-btn" class="modal-btn revival">复活</button>
+                    <button id="restart-btn" class="modal-btn restart">重新开始</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="victory-modal" id="victory-modal">
+            <div class="modal-content">
+                <h2>🎉 恭喜通关！</h2>
+                <p>你成功消除了所有卡片！</p>
+                <button id="next-level-btn" class="modal-btn">下一关</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="sheep_game.js"></script>
+</body>
+</html>

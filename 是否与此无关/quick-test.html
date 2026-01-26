@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速测试 - 游戏逻辑</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 15px 0; padding: 10px; border: 1px solid #ccc; }
+        .pass { background: #d4edda; }
+        .fail { background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>游戏逻辑快速测试</h1>
+
+    <div id="tests">
+        <div class="test">
+            <h3>测试1: "她是通过水有特殊气味或颜色判断水有害吗？"</h3>
+            <p>问题：第二个故事中的判断依据问题，包含"颜色"但应该是相关的一般疑问句</p>
+            <p>预期答案：应该是"是"（不能是"与此无关"或"可能有关"）</p>
+            <p id="test1-result">测试中...</p>
+        </div>
+
+        <div class="test">
+            <h3>测试2: "水有气味吗？"</h3>
+            <p>问题：一般疑问句形式，询问水质</p>
+            <p>预期答案：应该是"否"（水不安全/有问题）</p>
+            <p id="test2-result">测试中...</p>
+        </div>
+
+        <div class="test">
+            <h3>测试3: "她口渴吗？"</h3>
+            <p>问题：一般疑问句，事实询问</p>
+            <p>预期答案：应该是"是"</p>
+            <p id="test3-result">测试中...</p>
+        </div>
+
+        <div class="test">
+            <h3>测试4: "水是什么颜色的？"</h3>
+            <p>问题：特殊疑问句，包含"颜色"</p>
+            <p>预期答案：应该是"与此无关"（故事没提到颜色）</p>
+            <p id="test4-result">测试中...</p>
+        </div>
+
+        <div class="test">
+            <h3>测试5: "她为什么倒掉水？"</h3>
+            <p>问题：特殊疑问句（为什么）</p>
+            <p>预期答案：应该是提示性答案，不是"是/否/与此无关"</p>
+            <p id="test5-result">测试中...</p>
+        </div>
+    </div>
+
+    <script>
+        // 导入游戏逻辑的核心部分
+        const GameState = {
+            stories: [
+                {
+                    id: 2,
+                    fragment: "一个女人在沙漠中发现了一瓶水。她打开瓶子喝了一口，然后立刻把水倒掉了。",
+                    fullStory: "这个女人在沙漠中迷路了，她发现了一瓶水。但当她打开瓶子时，闻到水里有奇怪的气味，她意识到水可能被污染了或者有毒。为了不冒中毒的风险，她决定把水倒掉，继续寻找其他水源。",
+                    keywords: ["迷路", "沙漠", "污染", "有毒", "气味", "风险", "口渴", "喝水", "水源", "安全", "危险", "中毒", "毒药", "味道", "臭味", "寻找", "生存", "求生", "倒掉", "丢弃", "浪费", "谨慎", "小心", "怀疑"],
+                    questions: [
+                        { question: "这个女人口渴吗？", answer: "是" },
+                        { question: "这瓶水是干净的吗？", answer: "否" },
+                        { question: "这个女人倒掉水是因为她不渴吗？", answer: "否" },
+                        { question: "这瓶水里有毒吗？", answer: "与此无关" },
+                        { question: "这个女人在沙漠中迷路了吗？", answer: "是" },
+                        { question: "这个女人闻到奇怪的气味了吗？", answer: "是" }
+                    ]
+                }
+            ],
+            currentStoryIndex: 0
+        };
+
+        // 复制关键函数
+        function getCoreElementsForStory(storyId) {
+            const coreElements = {
+                1: ['男人', '酒吧', '酒保', '水', '枪', '谢谢', '走出', '离开'],
+                2: ['女人', '沙漠', '水', '瓶子', '打开', '喝', '倒掉'],
+                3: ['男人', '报纸', '阅读', '大笑', '哭', '哭泣']
+            };
+            return coreElements[storyId] || [];
+        }
+
+        function analyzeQuestionType(question, story) {
+            // 首先检查判断依据类问题（这些应该优先处理，即使包含其他模式）
+            const judgmentPatterns = ['判断', '依据', '根据', '通过', '怎么知道', '如何知道', '为什么认为',
+                                     '为何觉得', '怎么判断', '如何判断', '凭什么说', '根据什么', '依据什么',
+                                     '怎么想到', '如何想到', '怎么推测', '如何推测'];
+            for (const pattern of judgmentPatterns) {
+                if (question.includes(pattern)) {
+                    return 'direct'; // 判断依据类问题应该被视为直接相关
+                }
+            }
+
+            // 检查问题是否明显无关（但排除判断依据类问题）
+            const unrelatedPatterns = ['星期', '日期', '时间', '天气', '数字', '年龄', '身高', '体重'];
+            let isUnrelated = false;
+            for (const pattern of unrelatedPatterns) {
+                if (question.includes(pattern)) {
+                    isUnrelated = true;
+                    break;
+                }
+            }
+
+            if (isUnrelated) {
+                return 'unrelated';
+            }
+
+            // 检查是否包含故事的关键词
+            let hasKeyword = false;
+            for (const keyword of story.keywords) {
+                if (question.includes(keyword.toLowerCase())) {
+                    hasKeyword = true;
+                    break;
+                }
+            }
+
+            // 检查问题是否涉及故事的核心元素
+            const coreElements = getCoreElementsForStory(story.id);
+            let hasCoreElement = false;
+            for (const element of coreElements) {
+                if (question.includes(element)) {
+                    hasCoreElement = true;
+                    break;
+                }
+            }
+
+            if (hasKeyword || hasCoreElement) {
+                return 'direct';
+            } else {
+                // 检查是否是一般疑问句（可以用是/否回答的问题）
+                const yesNoQuestionPatterns = [
+                    '吗', '是否', '有没有', '是不是', '能否', '会不会', '可否', '可不可以',
+                    '行不行', '好不好', '对不对', '是不是', '有没有', '是否', '吗'
+                ];
+
+                // 检查是否是特殊疑问句（需要解释性回答）
+                const specialQuestionPatterns = ['为什么', '怎么样', '怎么', '如何', '为何', '什么原因', '什么'];
+
+                // 首先检查是否包含一般疑问句模式
+                for (const pattern of yesNoQuestionPatterns) {
+                    if (question.includes(pattern)) {
+                        return 'direct'; // 一般疑问句应该给出确定性答案
+                    }
+                }
+
+                // 然后检查是否包含特殊疑问句模式
+                for (const pattern of specialQuestionPatterns) {
+                    if (question.includes(pattern)) {
+                        return 'indirect'; // 特殊疑问句可以给出提示性答案
+                    }
+                }
+
+                // 如果都不匹配，尝试根据句子结构判断
+                // 检查是否以问号结尾且不包含特殊疑问词（可能是隐含的一般疑问句）
+                if (question.trim().endsWith('？') || question.trim().endsWith('?')) {
+                    // 不包含特殊疑问词，可能是一般疑问句
+                    let hasSpecialWord = false;
+                    for (const pattern of specialQuestionPatterns) {
+                        if (question.includes(pattern)) {
+                            hasSpecialWord = true;
+                            break;
+                        }
+                    }
+                    if (!hasSpecialWord) {
+                        return 'direct'; // 可能是一般疑问句
+                    }
+                }
+
+                return 'unrelated';
+            }
+        }
+
+        function getDirectAnswer(question, story) {
+            const storyId = story.id;
+
+            if (storyId === 2) {
+                // 第二个故事：沙漠中的水 - 增强的语义理解
+
+                // 事实1: 她是否口渴
+                if (question.includes('口渴') || question.includes('渴了') ||
+                    question.includes('需要水') || question.includes('想喝水') ||
+                    (question.includes('喝') && question.includes('水') && (question.includes('想') || question.includes('需要')))) {
+                    return '是';
+                }
+
+                // 事实2: 她是否迷路了
+                if (question.includes('迷路') || question.includes('迷失') || question.includes('走失') ||
+                    question.includes('找不到路') || question.includes('方向') || question.includes('丢失')) {
+                    return '是';
+                }
+
+                // 事实3: 她是否闻到了奇怪的气味（直接询问是否"闻到"）
+                if (question.includes('闻到') || question.includes('嗅到')) {
+                    return '是'; // 她确实闻到了奇怪的气味
+                }
+
+                // 询问水是否有气味/味道（间接询问水质）
+                if (question.includes('气味') || question.includes('味道') || question.includes('臭味') || question.includes('异味')) {
+                    if (question.includes('没有') || question.includes('不') || question.includes('无')) {
+                        return '否'; // "没有气味吗?" -> "否" (事实上水有气味)
+                    }
+                    // 间接询问水质，推断用户想知道水是否安全
+                    return '否'; // "有气味吗?" -> "否" (水不安全/有问题)
+                }
+
+                // 事实4: 她是否倒掉了水
+                if (question.includes('倒掉') || question.includes('倒水') || question.includes('倒出') ||
+                    question.includes('丢弃') || question.includes('扔掉') || question.includes('浪费')) {
+                    return '是';
+                }
+
+                // 然后检查对水质的判断性问题（这些需要推理）
+                // 水质安全相关的问题
+                const waterQualityPatterns = [
+                    // 直接询问安全性
+                    '安全吗', '能喝吗', '可以喝吗', '适合喝吗', '卫生吗',
+                    // 询问干净程度
+                    '干净吗', '清洁吗', '纯净吗', '清澈吗', '卫生吗',
+                    // 询问是否有问题
+                    '有问题吗', '不对劲吗', '正常吗', '变质了吗',
+                    // 污染相关
+                    '污染了吗', '被污染', '有毒吗', '毒',
+                    // 间接询问（通过状态判断）
+                    '好不好', '行不行', '可不可以'
+                ];
+
+                for (const pattern of waterQualityPatterns) {
+                    if (question.includes(pattern)) {
+                        return '否'; // 水不安全/不干净
+                    }
+                }
+
+                // 检查是否在问"为什么"倒掉水（如果是一般疑问句形式）
+                if ((question.includes('为什么') || question.includes('为何') || question.includes('原因')) &&
+                    (question.includes('倒') || question.includes('扔') || question.includes('丢弃'))) {
+                    // 检查是否是一般疑问句形式（包含"吗"等）
+                    if (question.includes('吗') || question.includes('是否') || question.includes('是不是')) {
+                        // 是一般疑问句，需要确定性答案
+                        // "她倒掉水是因为水有问题吗？" -> "是"
+                        return '是';
+                    }
+                    // 不是一般疑问句形式，应该由getIndirectAnswer处理
+                    // 但既然进入了getDirectAnswer，说明被识别为direct类型
+                    // 保守起见返回"是"
+                    return '是';
+                }
+
+                // 检查是否在问判断依据/推理过程
+                const judgmentPatterns = ['判断', '依据', '根据', '通过', '怎么知道', '如何知道', '为什么认为',
+                                         '为何觉得', '怎么判断', '如何判断', '凭什么说', '根据什么', '依据什么'];
+                for (const pattern of judgmentPatterns) {
+                    if (question.includes(pattern)) {
+                        // 如果是询问判断依据，回答"是"（她通过气味判断）
+                        return '是';
+                    }
+                }
+
+                // 检查是否在问水本身的性质（而非故事中的具体事实）
+                if (question.includes('水') && (
+                    question.includes('是什么') || question.includes('什么样的') ||
+                    question.includes('种类') || question.includes('类型'))) {
+                    return '与此无关'; // 水的具体种类与此无关
+                }
+
+                // 检查是否在问颜色相关（故事中没有提到颜色）
+                if (question.includes('颜色') || question.includes('色泽') || question.includes('色')) {
+                    if (question.includes('水') || question.includes('瓶子')) {
+                        return '与此无关'; // 故事没有提到水的颜色
+                    }
+                }
+
+                // 检查是否在问有害/有毒（虽然预设说"与此无关"，但实际故事中水可能有害）
+                if (question.includes('有害') || question.includes('有毒') || question.includes('毒')) {
+                    if (question.includes('水') || question.includes('瓶子')) {
+                        // 实际上水可能被污染/有问题，但不是明确有毒
+                        // 根据预设问题，水是否有毒与此无关
+                        return '与此无关';
+                    }
+                }
+            }
+
+            // 默认：对于未匹配的问题，尝试给出确定性答案
+            // 既然问题进入了getDirectAnswer，说明它被识别为direct类型（一般疑问句）
+            // 我们需要给出"是"、"否"或"与此无关"
+            return '是'; // 保守回答
+        }
+
+        function getIndirectAnswer(question, story) {
+            // 对于间接问题（特殊疑问句），给出提示性答案
+            const storyId = story.id;
+
+            if (storyId === 2) {
+                // 第二个故事提示
+                if (question.includes('为什么') && question.includes('倒掉')) {
+                    return '思考水可能存在的问题';
+                }
+                if (question.includes('怎么') || question.includes('如何')) {
+                    return '注意角色在沙漠中的处境';
+                }
+            }
+
+            // 通用提示
+            const prompts = [
+                '这个问题可能需要从另一个角度思考',
+                '试着关注故事中的异常细节',
+                '考虑角色的动机可能是什么',
+                '也许这个问题与故事的核心谜题有关',
+                '继续探索，你离真相更近了'
+            ];
+
+            return prompts[Math.floor(Math.random() * prompts.length)];
+        }
+
+        function getAnswerForQuestion(question) {
+            const currentStory = GameState.stories[GameState.currentStoryIndex];
+
+            // 首先检查预定义的问题（完全匹配）
+            for (const q of currentStory.questions) {
+                if (question.toLowerCase() === q.question.toLowerCase()) {
+                    return q.answer;
+                }
+            }
+
+            const lowerQuestion = question.toLowerCase();
+
+            // 检查问题类型和相关性
+            const questionType = analyzeQuestionType(lowerQuestion, currentStory);
+
+            // 根据问题类型返回相应的答案
+            switch (questionType) {
+                case 'direct':
+                    // 直接相关的问题，尝试根据关键词给出合理答案
+                    return getDirectAnswer(lowerQuestion, currentStory);
+                case 'indirect':
+                    // 间接相关的问题，给出提示性答案
+                    return getIndirectAnswer(lowerQuestion, currentStory);
+                case 'unrelated':
+                    // 完全无关的问题
+                    return '与此无关';
+                default:
+                    // 无法确定，保守起见返回"与此无关"
+                    return '与此无关';
+            }
+        }
+
+        // 运行测试
+        function runTest(question, expected, testId) {
+            const answer = getAnswerForQuestion(question);
+            const resultElement = document.getElementById(testId + '-result');
+            const testElement = resultElement.parentElement;
+
+            let passed = false;
+            let message = `答案: "${answer}" - `;
+
+            if (expected === "应该是'是'") {
+                passed = answer === '是';
+                message += passed ? '✓ 正确' : '✗ 错误，应为"是"';
+            } else if (expected === "应该是'否'") {
+                passed = answer === '否';
+                message += passed ? '✓ 正确' : '✗ 错误，应为"否"';
+            } else if (expected === "应该是'与此无关'") {
+                passed = answer === '与此无关';
+                message += passed ? '✓ 正确' : `✗ 错误，应为"与此无关"`;
+            } else if (expected === "应该是提示性答案，不是'是/否/与此无关'") {
+                passed = answer !== '是' && answer !== '否' && answer !== '与此无关';
+                message += passed ? '✓ 正确（提示性答案）' : `✗ 错误，应为提示性答案`;
+            }
+
+            resultElement.textContent = message;
+            testElement.className = passed ? 'test pass' : 'test fail';
+        }
+
+        // 执行测试
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                runTest("她是通过水有特殊气味或颜色判断水有害吗？", "应该是'是'", "test1");
+                runTest("水有气味吗？", "应该是'否'", "test2");
+                runTest("她口渴吗？", "应该是'是'", "test3");
+                runTest("水是什么颜色的？", "应该是'与此无关'", "test4");
+                runTest("她为什么倒掉水？", "应该是提示性答案，不是'是/否/与此无关'", "test5");
+            }, 100);
+        });
+    </script>
+</body>
+</html>
