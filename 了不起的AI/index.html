@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>治愈系AI聊天伴侣</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="avatar">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h2>小韬</h2>
+                <p class="subtitle">你的治愈系AI伙伴</p>
+            </div>
+
+            <div class="sidebar-menu">
+                <button class="menu-btn active" id="newChatBtn">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>新对话</span>
+                </button>
+                <button class="menu-btn" id="clearChatBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>清空记录</span>
+                </button>
+                <button class="menu-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                    <span>设置</span>
+                </button>
+                <button class="menu-btn" id="helpBtn">
+                    <i class="fas fa-question-circle"></i>
+                    <span>帮助</span>
+                </button>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fas fa-star"></i> 明星知识</h3>
+                <p class="info-text">
+                    试试问我关于这些明星：<br>
+                    周杰伦、王楚钦、孙颖莎、<br>
+                    樊振东、文韬、周峻纬、JY
+                </p>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="status">
+                    <div class="status-indicator online"></div>
+                    <span>在线陪伴</span>
+                </div>
+                <p class="quote">"愿你今天被温柔以待"</p>
+            </div>
+        </aside>
+
+        <!-- 主聊天区域 -->
+        <main class="main-content">
+            <header class="chat-header">
+                <div class="chat-info">
+                    <h1><i class="fas fa-sparkles"></i> 治愈聊天室</h1>
+                    <p class="chat-subtitle">与小韬的温馨对话</p>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" id="themeBtn" title="切换主题">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <button class="action-btn" id="voiceBtn" title="语音输入">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="action-btn" id="emojiBtn" title="表情符号">
+                        <i class="far fa-smile"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="chat-container">
+                <!-- 欢迎消息 -->
+                <div class="message-group ai-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <p>Hi，我是小韬，想成为你的电子朋友！💕</p>
+                            <p>今天有什么想聊的吗？无论是分享心情、寻求建议，还是单纯想找人说说话，我都在这里陪伴你哦～</p>
+                        </div>
+                        <div class="message-time">刚刚</div>
+                    </div>
+                </div>
+
+                <!-- 消息区域 -->
+                <div class="messages" id="messageContainer">
+                    <!-- 消息将在这里动态添加 -->
+                </div>
+
+                <!-- 快速回复建议 -->
+                <div class="quick-replies" id="quickReplies">
+                    <button class="quick-reply-btn" data-message="今天心情不太好...">心情倾诉</button>
+                    <button class="quick-reply-btn" data-message="有什么开心的事分享吗？">分享快乐</button>
+                    <button class="quick-reply-btn" data-message="我需要一些鼓励">需要鼓励</button>
+                    <button class="quick-reply-btn" data-message="讲个笑话吧">讲个笑话</button>
+                    <button class="quick-reply-btn" data-message="周杰伦有哪些成就？">周杰伦的成就</button>
+                    <button class="quick-reply-btn" data-message="王楚钦乒乓球打得怎么样？">王楚钦乒乓球</button>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="messageInput" placeholder="输入你想说的话... 按Enter发送" autocomplete="off">
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-hints">
+                    <span class="hint"><i class="fas fa-lightbulb"></i> 小韬会用心倾听并温柔回应</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- 设置面板 -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-header">
+                <h3><i class="fas fa-cog"></i> 设置</h3>
+                <button class="close-btn" id="closeSettingsBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label for="aiName">AI伙伴名称</label>
+                    <input type="text" id="aiName" value="小韬" placeholder="输入AI伙伴名称">
+                </div>
+                <div class="setting-item">
+                    <label for="aiPersonality">AI性格</label>
+                    <select id="aiPersonality">
+                        <option value="gentle">温柔治愈型</option>
+                        <option value="cheerful">活泼开朗型</option>
+                        <option value="wise">智慧导师型</option>
+                        <option value="friend">知心朋友型</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="soundEnabled" checked>
+                        <span>消息提示音</span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="autoScroll" checked>
+                        <span>自动滚动到最新消息</span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <button class="btn-save" id="saveSettingsBtn">
+                        <i class="fas fa-save"></i> 保存设置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 装饰元素 -->
+    <div class="decoration deco-1">🌸</div>
+    <div class="decoration deco-2">💫</div>
+    <div class="decoration deco-3">✨</div>
+    <div class="decoration deco-4">🌼</div>
+
+    <script src="nlp-module.js"></script>
+    <script src="ml-dialogue.js"></script>
+    <script src="knowledge-manager.js"></script>
+    <script src="multimodal-module.js"></script>
+    <script src="celebrity-knowledge.js"></script>
+    <script src="script-final-enhanced.js"></script>
+</body>
+</html>

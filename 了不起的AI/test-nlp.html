@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP模块测试</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>NLP模块测试</h1>
+
+    <div class="test-section">
+        <h2>意图识别测试</h2>
+        <input type="text" id="intentInput" placeholder="输入测试文本..." value="你好，我今天很开心">
+        <button onclick="testIntent()">测试意图</button>
+        <div id="intentResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>实体提取测试</h2>
+        <input type="text" id="entityInput" placeholder="输入测试文本..." value="我叫小明，今年25岁，住在北京">
+        <button onclick="testEntity()">测试实体</button>
+        <div id="entityResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>情感分析测试</h2>
+        <input type="text" id="emotionInput" placeholder="输入测试文本..." value="我今天工作很累，压力很大">
+        <button onclick="testEmotion()">测试情感</button>
+        <div id="emotionResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>综合分析测试</h2>
+        <input type="text" id="analysisInput" placeholder="输入测试文本..." value="我今天学习很辛苦，有什么建议吗？">
+        <button onclick="testAnalysis()">综合分析</button>
+        <div id="analysisResult" class="result"></div>
+    </div>
+
+    <script src="nlp-module.js"></script>
+    <script>
+        let nlpModule = null;
+
+        // 等待页面加载完成后初始化NLP模块
+        document.addEventListener('DOMContentLoaded', () => {
+            nlpModule = new SmartNLPModule();
+            console.log('NLP模块初始化完成');
+        });
+
+        function testIntent() {
+            if (!nlpModule) return;
+            const text = document.getElementById('intentInput').value;
+            const intentScores = nlpModule.analyzeIntent(text);
+            document.getElementById('intentResult').textContent = JSON.stringify(intentScores, null, 2);
+        }
+
+        function testEntity() {
+            if (!nlpModule) return;
+            const text = document.getElementById('entityInput').value;
+            const entities = nlpModule.extractEntities(text);
+            document.getElementById('entityResult').textContent = JSON.stringify(entities, null, 2);
+        }
+
+        async function testEmotion() {
+            if (!nlpModule) return;
+            const text = document.getElementById('emotionInput').value;
+            const emotion = await nlpModule.analyzeEmotion(text);
+            document.getElementById('emotionResult').textContent = JSON.stringify(emotion, null, 2);
+        }
+
+        async function testAnalysis() {
+            if (!nlpModule) return;
+            const text = document.getElementById('analysisInput').value;
+            const analysis = await nlpModule.analyzeMessage(text);
+            document.getElementById('analysisResult').textContent = JSON.stringify(analysis, null, 2);
+        }
+    </script>
+</body>
+</html>

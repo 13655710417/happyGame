@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字华容道</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧩</text></svg>">
+    <meta name="description" content="数字华容道游戏 - 复古风格，挑战你的逻辑思维">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-puzzle-piece"></i> 数字华容道</h1>
+            <p class="subtitle">滑动数字方块，按顺序排列即可获胜</p>
+        </header>
+
+        <main>
+            <div class="game-area">
+                <div class="control-panel">
+                    <div class="size-selector">
+                        <h3><i class="fas fa-th-large"></i> 选择规格</h3>
+                        <div class="size-buttons">
+                            <button class="size-btn active" data-size="4">4×4</button>
+                            <button class="size-btn" data-size="5">5×5</button>
+                            <button class="size-btn" data-size="6">6×6</button>
+                            <button class="size-btn" data-size="7">7×7</button>
+                        </div>
+                    </div>
+
+                    <div class="game-controls">
+                        <button id="newGameBtn" class="btn-primary">
+                            <i class="fas fa-play"></i> 开始新游戏
+                        </button>
+                        <button id="resetBtn" class="btn-secondary">
+                            <i class="fas fa-redo"></i> 重新开始
+                        </button>
+                        <button id="hintBtn" class="btn-secondary">
+                            <i class="fas fa-lightbulb"></i> 提示
+                        </button>
+                        <button id="tutorialBtn" class="btn-secondary">
+                            <i class="fas fa-graduation-cap"></i> 游戏教程
+                        </button>
+                    </div>
+
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="info-label">步数:</span>
+                            <span id="moveCount">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">时间:</span>
+                            <span id="timer">00:00</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">难度:</span>
+                            <span id="difficulty">简单</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="board-container">
+                    <div id="board" class="board">
+                        <!-- 游戏板将在这里动态生成 -->
+                    </div>
+                    <div class="board-overlay" id="winOverlay">
+                        <div class="win-message">
+                            <i class="fas fa-trophy"></i>
+                            <h2>恭喜通过！</h2>
+                            <p>你成功完成了数字华容道！</p>
+                            <div class="win-stats">
+                                <p>步数: <span id="winMoves">0</span></p>
+                                <p>时间: <span id="winTime">00:00</span></p>
+                            </div>
+                            <button id="playAgainBtn" class="btn-primary">
+                                <i class="fas fa-redo"></i> 再玩一次
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tutorial-panel" id="tutorialPanel">
+                <div class="tutorial-header">
+                    <h3><i class="fas fa-graduation-cap"></i> 数字华容道技巧教程</h3>
+                    <button id="closeTutorialBtn" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="tutorial-content">
+                    <div class="tutorial-section">
+                        <h4><i class="fas fa-chess-board"></i> 游戏目标</h4>
+                        <p>将数字方块按顺序排列（从左到右，从上到下），最后一个位置为空。</p>
+                    </div>
+
+                    <div class="tutorial-section">
+                        <h4><i class="fas fa-bullseye"></i> 基本策略</h4>
+                        <ul>
+                            <li><strong>分层解决</strong>：先完成第一行，然后第一列，再第二行，以此类推。</li>
+                            <li><strong>避免破坏已完成的区域</strong>：移动方块时小心不要打乱已经排好的部分。</li>
+                            <li><strong>为空位规划路径</strong>：时刻关注空白方块的位置，为它规划移动路径。</li>
+                        </ul>
+                    </div>
+
+                    <div class="tutorial-section">
+                        <h4><i class="fas fa-lightbulb"></i> 高级技巧</h4>
+                        <ul>
+                            <li><strong>蛇形排序法</strong>：对于大尺寸棋盘，可以按蛇形顺序排列数字。</li>
+                            <li><strong>最后两行技巧</strong>：最后两行需要特殊技巧，可以搜索"华容道最后两行解法"。</li>
+                            <li><strong>预判移动</strong>：每次移动前思考2-3步后的局面。</li>
+                        </ul>
+                    </div>
+
+                    <div class="tutorial-section">
+                        <h4><i class="fas fa-gamepad"></i> 练习建议</h4>
+                        <ul>
+                            <li>从4×4开始，掌握后再尝试更大尺寸。</li>
+                            <li>记录自己的步数和时间，尝试打破自己的记录。</li>
+                            <li>使用"提示"功能学习新的解法思路。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>数字华容道游戏 &copy; 2026 | 使用HTML5、CSS3和JavaScript构建</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

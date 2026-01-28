@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>明星知识功能测试</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .test-title i {
+            color: #FF69B4;
+        }
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FFB6C1;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #FF69B4, #FFB6C1);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #FFF8E1;
+            border: 2px dashed #FFD54F;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .celebrity-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .celebrity-card {
+            padding: 15px;
+            background: #FFE4E9;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .celebrity-card:hover {
+            transform: translateY(-3px);
+            background: #FFD1DC;
+        }
+        .celebrity-name {
+            font-weight: bold;
+            color: #FF69B4;
+            margin-bottom: 5px;
+        }
+        .celebrity-category {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>明星知识功能测试</h1>
+
+        <div class="test-section">
+            <div class="test-title">
+                <i class="fas fa-star"></i>
+                测试明星检测功能
+            </div>
+            <input type="text" class="test-input" id="testInput" placeholder="输入包含明星名字的消息，如：我喜欢周杰伦的音乐">
+            <button class="test-button" onclick="testCelebrityDetection()">测试检测</button>
+            <div class="test-result" id="detectionResult"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">
+                <i class="fas fa-comment"></i>
+                测试明星回复生成
+            </div>
+            <p>点击明星卡片测试回复生成：</p>
+            <div class="celebrity-list" id="celebrityList"></div>
+            <div class="test-result" id="generationResult"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">
+                <i class="fas fa-lightbulb"></i>
+                支持的明星列表
+            </div>
+            <div id="supportedCelebrities"></div>
+        </div>
+    </div>
+
+    <script src="celebrity-knowledge.js"></script>
+    <script>
+        // 创建明星知识管理器实例
+        const celebrityManager = new CelebrityKnowledge();
+
+        // 初始化支持的明星列表
+        function initSupportedCelebrities() {
+            const container = document.getElementById('supportedCelebrities');
+            const celebrities = celebrityManager.getAllCelebrityNames();
+
+            let html = '<p>当前支持以下7位明星：</p><ul>';
+            celebrities.forEach(name => {
+                html += `<li>${name}</li>`;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        }
+
+        // 初始化明星卡片
+        function initCelebrityCards() {
+            const container = document.getElementById('celebrityList');
+            const celebrities = celebrityManager.celebrities;
+
+            let html = '';
+            for (const [id, data] of Object.entries(celebrities)) {
+                html += `
+                    <div class="celebrity-card" onclick="testCelebrityGeneration('${id}')">
+                        <div class="celebrity-name">${data.name}</div>
+                        <div class="celebrity-category">${data.category === 'music' ? '音乐' :
+                                                         data.category === 'sports' ? '体育' : '娱乐'}</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // 测试明星检测
+        function testCelebrityDetection() {
+            const input = document.getElementById('testInput').value;
+            const resultContainer = document.getElementById('detectionResult');
+
+            if (!input.trim()) {
+                resultContainer.innerHTML = '请输入测试消息';
+                return;
+            }
+
+            const detected = celebrityManager.detectCelebrityMention(input);
+
+            if (detected.length === 0) {
+                resultContainer.innerHTML = '未检测到明星名字';
+            } else {
+                let result = `检测到 ${detected.length} 位明星：\n\n`;
+                detected.forEach((item, index) => {
+                    result += `${index + 1}. ${item.data.name} (ID: ${item.id})\n`;
+                    result += `   类别：${item.data.category}\n`;
+                    result += `   成就示例：${item.data.achievements[0]}\n\n`;
+                });
+                resultContainer.innerHTML = result;
+            }
+        }
+
+        // 测试明星回复生成
+        function testCelebrityGeneration(celebrityId) {
+            const resultContainer = document.getElementById('generationResult');
+
+            const response = celebrityManager.generateCelebrityResponse(celebrityId);
+
+            if (response) {
+                resultContainer.innerHTML = response;
+            } else {
+                resultContainer.innerHTML = '生成回复失败';
+            }
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initSupportedCelebrities();
+            initCelebrityCards();
+        });
+    </script>
+</body>
+</html>
