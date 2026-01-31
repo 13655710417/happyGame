@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫雷游戏平台</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bomb"></i> 扫雷游戏平台</h1>
+            <p class="subtitle">经典益智游戏，现代功能体验</p>
+        </header>
+
+        <main>
+            <div class="game-controls">
+                <div class="difficulty-selector">
+                    <h2><i class="fas fa-sliders-h"></i> 游戏设置</h2>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn active" data-rows="9" data-cols="9" data-mines="10">
+                            <i class="fas fa-chess-board"></i> 初级 (9×9, 10个雷)
+                        </button>
+                        <button class="difficulty-btn" data-rows="16" data-cols="16" data-mines="40">
+                            <i class="fas fa-chess-board"></i> 中级 (16×16, 40个雷)
+                        </button>
+                        <button class="difficulty-btn" data-rows="16" data-cols="30" data-mines="99">
+                            <i class="fas fa-chess-board"></i> 专家 (16×30, 99个雷)
+                        </button>
+                        <button class="difficulty-btn custom-mode">
+                            <i class="fas fa-cog"></i> 自定义
+                        </button>
+                    </div>
+
+                    <div class="custom-settings hidden">
+                        <div class="input-group">
+                            <label for="rows">行数：</label>
+                            <input type="number" id="rows" min="5" max="30" value="9">
+                        </div>
+                        <div class="input-group">
+                            <label for="cols">列数：</label>
+                            <input type="number" id="cols" min="5" max="40" value="9">
+                        </div>
+                        <div class="input-group">
+                            <label for="mines">雷数：</label>
+                            <input type="number" id="mines" min="1" max="200" value="10">
+                        </div>
+                        <button id="apply-custom" class="btn"><i class="fas fa-check"></i> 应用自定义</button>
+                    </div>
+
+                    <div class="keyboard-controls">
+                        <h3><i class="fas fa-keyboard"></i> 键盘/触摸操作</h3>
+                        <p class="control-hint">使用方向键移动焦点，然后点击下方按钮操作</p>
+                        <div class="keyboard-buttons">
+                            <button id="keyboard-reveal" class="keyboard-btn keyboard-btn-reveal">
+                                <i class="fas fa-hand-point-up"></i> 翻开
+                            </button>
+                            <button id="keyboard-flag" class="keyboard-btn keyboard-btn-flag">
+                                <i class="fas fa-flag"></i> 标记
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-info">
+                    <div class="stats">
+                        <div class="stat">
+                            <i class="fas fa-flag"></i>
+                            <span id="flags">0</span> / <span id="total-mines">10</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-heart"></i>
+                            <span id="lives">1</span> 条命
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-lightbulb"></i>
+                            <span id="hints">3</span> 次提示
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-clock"></i>
+                            <span id="timer">000</span>秒
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="new-game" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> 新游戏
+                        </button>
+                        <button id="hint-btn" class="btn btn-secondary">
+                            <i class="fas fa-lightbulb"></i> 使用提示 (<span id="hint-count">3</span>)
+                        </button>
+                        <button id="reveal-btn" class="btn btn-warning">
+                            <i class="fas fa-eye"></i> 显示安全区域
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-board-container">
+                <div class="board-header">
+                    <h3><i class="fas fa-gamepad"></i> 游戏棋盘</h3>
+                    <div class="instructions">
+                        <p><i class="fas fa-mouse-pointer"></i> 左键点击翻开格子</p>
+                        <p><i class="fas fa-mouse-pointer right-click"></i> 右键点击标记/取消标记地雷</p>
+                        <p><i class="fas fa-keyboard"></i> 键盘操作：方向键/WASD移动，空格键翻开，回车键标记</p>
+                    </div>
+                </div>
+
+                <div class="game-board" id="game-board">
+                    <!-- Game board will be generated by JavaScript -->
+                </div>
+
+                <div class="mobile-controls">
+                    <div class="control-header">
+                        <h4><i class="fas fa-mobile-alt"></i> 触摸/键盘控制面板</h4>
+                        <p class="control-description">无鼠标操作支持：使用这些按钮或键盘操作游戏</p>
+                    </div>
+                    <div class="mobile-buttons">
+                        <button id="reveal-mode-btn" class="mobile-btn mobile-btn-reveal active">
+                            <i class="fas fa-hand-pointer"></i> 翻开模式
+                        </button>
+                        <button id="flag-mode-btn" class="mobile-btn mobile-btn-flag">
+                            <i class="fas fa-flag"></i> 标记模式
+                        </button>
+                        <button id="quick-flag-btn" class="mobile-btn mobile-btn-quick-flag">
+                            <i class="fas fa-bolt"></i> 快速标记
+                        </button>
+                    </div>
+                    <div class="mobile-action-buttons">
+                        <button id="reveal-action-btn" class="mobile-action-btn mobile-action-reveal">
+                            <i class="fas fa-hand-point-up"></i> 翻开当前格子
+                        </button>
+                        <button id="flag-action-btn" class="mobile-action-btn mobile-action-flag">
+                            <i class="fas fa-flag-checkered"></i> 标记当前格子
+                        </button>
+                    </div>
+                    <div class="mobile-instruction">
+                        <p id="mobile-mode-text">当前模式：<span>翻开</span> - 点击格子执行对应操作</p>
+                        <p class="keyboard-hint">键盘操作：方向键/WASD移动，空格键翻开，回车键标记</p>
+                        <p class="touch-hint">触摸操作：点击模式按钮切换，使用操作按钮执行动作</p>
+                    </div>
+                </div>
+
+                <div class="game-status">
+                    <div id="status-message">点击格子开始游戏！</div>
+                    <div class="status-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="strategy-section">
+                <button id="strategy-btn" class="btn btn-info strategy-btn">
+                    <i class="fas fa-book"></i> 游戏攻略
+                </button>
+                <p class="strategy-hint">学习扫雷定式，提高游戏技巧</p>
+            </div>
+
+            <div class="features">
+                <h2><i class="fas fa-star"></i> 游戏特色</h2>
+                <div class="feature-grid">
+                    <div class="feature">
+                        <i class="fas fa-expand-alt"></i>
+                        <h3>多种规格</h3>
+                        <p>可选择初级、中级、专家或自定义棋盘尺寸。</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-mouse"></i>
+                        <h3>鼠标控制</h3>
+                        <p>左键翻开格子，右键标记/取消标记地雷。完全兼容触摸设备。</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>响应式设计</h3>
+                        <p>自适应布局，在桌面、平板和移动设备上完美运行。</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-heartbeat"></i>
+                        <h3>复活机会</h3>
+                        <p>点击地雷时获得一次额外生命。请谨慎使用！</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>提示系统</h3>
+                        <p>每局游戏有三次提示机会，可在卡住时揭示安全格子。</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3>实时统计</h3>
+                        <p>实时更新标记、时间和剩余地雷数量。</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-keyboard"></i>
+                        <h3>无鼠标操作</h3>
+                        <p>完整的键盘导航和触摸按钮支持，没有鼠标也能玩游戏。</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>扫雷游戏平台 &copy; 2026 | 使用 <i class="fas fa-heart"></i> 和原生 JavaScript 构建</p>
+            <p class="instructions-footer">提示：策略性使用提示，并记住你有一次复活机会！</p>
+        </footer>
+    </div>
+
+    <!-- 游戏攻略弹窗 -->
+    <div id="strategy-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-graduation-cap"></i> 扫雷游戏攻略</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="strategy-intro">
+                    <p>扫雷游戏中有一些经典定式可以帮助你快速判断地雷位置。以下是几个常见定式：</p>
+                </div>
+
+                <div class="strategy-patterns">
+                    <div class="pattern">
+                        <h3><i class="fas fa-chess-board"></i> 121 定式</h3>
+                        <div class="pattern-diagram">
+                            <div class="pattern-row">
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">1</div>
+                            </div>
+                        </div>
+                        <p class="pattern-explanation">在"121"模式中，两个"1"旁边的格子是安全的，而"2"旁边的两个格子中有一个是地雷。</p>
+                    </div>
+
+                    <div class="pattern">
+                        <h3><i class="fas fa-chess-board"></i> 1221 定式</h3>
+                        <div class="pattern-diagram">
+                            <div class="pattern-row">
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">1</div>
+                            </div>
+                        </div>
+                        <p class="pattern-explanation">"1221"模式中，两端的"1"旁边的格子是安全的，中间两个"2"旁边的格子中有一个是地雷。</p>
+                    </div>
+
+                    <div class="pattern">
+                        <h3><i class="fas fa-chess-board"></i> 12121 定式</h3>
+                        <div class="pattern-diagram">
+                            <div class="pattern-row">
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">1</div>
+                            </div>
+                        </div>
+                        <p class="pattern-explanation">在"12121"模式中，所有"1"旁边的格子都是安全的，而"2"旁边的格子中有一个是地雷。</p>
+                    </div>
+
+                    <div class="pattern">
+                        <h3><i class="fas fa-chess-board"></i> 212 定式</h3>
+                        <div class="pattern-diagram">
+                            <div class="pattern-row">
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">2</div>
+                            </div>
+                        </div>
+                        <p class="pattern-explanation">"212"模式中，中间的"1"旁边的格子是安全的，两边的"2"各有一个地雷在旁边。</p>
+                    </div>
+
+                    <div class="pattern">
+                        <h3><i class="fas fa-chess-board"></i> 2112 定式</h3>
+                        <div class="pattern-diagram">
+                            <div class="pattern-row">
+                                <div class="pattern-cell">2</div>
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">1</div>
+                                <div class="pattern-cell">2</div>
+                            </div>
+                        </div>
+                        <p class="pattern-explanation">"2112"模式中，两个"1"旁边的格子都是安全的，两端的"2"各有一个地雷在旁边。</p>
+                    </div>
+                </div>
+
+                <div class="strategy-tip">
+                    <p><i class="fas fa-lightbulb"></i> <strong>更多规律等你探索～</strong></p>
+                    <p>扫雷游戏中还有很多其他规律和技巧，通过不断练习和观察，你会发现更多有趣的定式！</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary modal-close-btn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bomb"></i> Minesweeper Platform</h1>
+            <p class="subtitle">A classic puzzle game with modern features</p>
+        </header>
+
+        <main>
+            <div class="game-controls">
+                <div class="difficulty-selector">
+                    <h2><i class="fas fa-sliders-h"></i> Game Settings</h2>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn active" data-rows="9" data-cols="9" data-mines="10">
+                            <i class="fas fa-chess-board"></i> Beginner (9×9, 10 mines)
+                        </button>
+                        <button class="difficulty-btn" data-rows="16" data-cols="16" data-mines="40">
+                            <i class="fas fa-chess-board"></i> Intermediate (16×16, 40 mines)
+                        </button>
+                        <button class="difficulty-btn" data-rows="16" data-cols="30" data-mines="99">
+                            <i class="fas fa-chess-board"></i> Expert (16×30, 99 mines)
+                        </button>
+                        <button class="difficulty-btn custom-mode">
+                            <i class="fas fa-cog"></i> Custom
+                        </button>
+                    </div>
+
+                    <div class="custom-settings hidden">
+                        <div class="input-group">
+                            <label for="rows">Rows:</label>
+                            <input type="number" id="rows" min="5" max="30" value="9">
+                        </div>
+                        <div class="input-group">
+                            <label for="cols">Columns:</label>
+                            <input type="number" id="cols" min="5" max="40" value="9">
+                        </div>
+                        <div class="input-group">
+                            <label for="mines">Mines:</label>
+                            <input type="number" id="mines" min="1" max="200" value="10">
+                        </div>
+                        <button id="apply-custom" class="btn"><i class="fas fa-check"></i> Apply Custom</button>
+                    </div>
+                </div>
+
+                <div class="game-info">
+                    <div class="stats">
+                        <div class="stat">
+                            <i class="fas fa-flag"></i>
+                            <span id="flags">0</span> / <span id="total-mines">10</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-heart"></i>
+                            <span id="lives">1</span> lives
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-lightbulb"></i>
+                            <span id="hints">3</span> hints left
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-clock"></i>
+                            <span id="timer">000</span>s
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="new-game" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> New Game
+                        </button>
+                        <button id="hint-btn" class="btn btn-secondary">
+                            <i class="fas fa-lightbulb"></i> Use Hint (<span id="hint-count">3</span>)
+                        </button>
+                        <button id="reveal-btn" class="btn btn-warning">
+                            <i class="fas fa-eye"></i> Reveal Safe Area
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-board-container">
+                <div class="board-header">
+                    <h3><i class="fas fa-gamepad"></i> Game Board</h3>
+                    <div class="instructions">
+                        <p><i class="fas fa-mouse-pointer"></i> Left-click to reveal cells</p>
+                        <p><i class="fas fa-mouse-pointer right-click"></i> Right-click to flag/unflag mines</p>
+                    </div>
+                </div>
+
+                <div class="game-board" id="game-board">
+                    <!-- Game board will be generated by JavaScript -->
+                </div>
+
+                <div class="game-status">
+                    <div id="status-message">Click a cell to start the game!</div>
+                    <div class="status-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <h2><i class="fas fa-star"></i> Game Features</h2>
+                <div class="feature-grid">
+                    <div class="feature">
+                        <i class="fas fa-expand-alt"></i>
+                        <h3>Multiple Sizes</h3>
+                        <p>Choose from beginner, intermediate, expert or create your own custom board size.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-mouse"></i>
+                        <h3>Mouse Controls</h3>
+                        <p>Left-click reveals cells, right-click places/removes flags. Fully compatible with touch devices.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>Responsive Design</h3>
+                        <p>Plays perfectly on desktop, tablet, and mobile devices with adaptive layouts.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-heartbeat"></i>
+                        <h3>Second Chance</h3>
+                        <p>Get one extra life when you click on a mine. Use it wisely!</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Hint System</h3>
+                        <p>Three hints available per game to reveal safe cells when you're stuck.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3>Real-time Stats</h3>
+                        <p>Track flags, time, and remaining mines with live updates.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Minesweeper Platform &copy; 2026 | Built with <i class="fas fa-heart"></i> and vanilla JavaScript</p>
+            <p class="instructions-footer">Tip: Use hints strategically and remember you have one resurrection chance!</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
