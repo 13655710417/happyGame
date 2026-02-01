@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合了个十 - 莫兰迪色系合成游戏</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <h1><i class="fas fa-plus-circle"></i> 合了个十</h1>
+                <p class="subtitle">合成数字到10的限时挑战</p>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-clock"></i> 时间</span>
+                    <span id="timer" class="stat-value">60</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-star"></i> 分数</span>
+                    <span id="score" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-bolt"></i> 连击</span>
+                    <span id="combo" class="stat-value">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-area">
+            <div class="game-info">
+                <div class="instructions">
+                    <h3><i class="fas fa-gamepad"></i> 游戏规则</h3>
+                    <p>在10×15的网格中，框选矩形区域使数字之和为10！</p>
+                    <p>• 点击并拖拽绘制矩形框选数字</p>
+                    <p>• 框内数字总和为10即可消除得分</p>
+                    <p>• 消除的数字越多，得分越高</p>
+                    <p>• 连击可获得额外分数</p>
+                    <p>• 数字消除后不再补充</p>
+                    <p>• 时间结束或无解时游戏结束</p>
+                </div>
+                <div class="controls">
+                    <button id="start-btn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> 开始游戏
+                    </button>
+                    <button id="pause-btn" class="btn btn-secondary" disabled>
+                        <i class="fas fa-pause"></i> 暂停
+                    </button>
+                    <button id="restart-btn" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                </div>
+            </div>
+
+            <div class="game-board">
+                <div class="grid" id="game-grid">
+                    <!-- 游戏格子将通过JS动态生成 -->
+                </div>
+                <div class="game-tips">
+                    <h3><i class="fas fa-lightbulb"></i> 游戏技巧</h3>
+                    <p>• 寻找小数字(1-3)密集的区域</p>
+                    <p>• 单个数字10无法直接消除</p>
+                    <p>• 连击可获得额外分数加成</p>
+                    <p>• 矩形越大，得分越高</p>
+                    <p>• 数字消除后不再补充</p>
+                </div>
+            </div>
+
+            <div class="achievements">
+                <h3><i class="fas fa-trophy"></i> 成就</h3>
+                <div class="achievement-list">
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-bolt"></i>
+                        <span>5连击大师</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-crown"></i>
+                        <span>100分达成</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-trophy"></i>
+                        <span>200分达成</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-award"></i>
+                        <span>500分达成</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-star"></i>
+                        <span>10次消除</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-rocket"></i>
+                        <span>快速消除者</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-gem"></i>
+                        <span>完美消除</span>
+                    </div>
+                    <div class="achievement" data-achieved="false">
+                        <i class="fas fa-forward-fast"></i>
+                        <span>神速消除</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 合了个十 | 莫兰迪色系合成游戏</p>
+            <p class="hint">提示：拖拽绘制矩形框选数字，使数字和为10</p>
+        </footer>
+    </div>
+
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-flag-checkered"></i> 游戏结束</h2>
+            <p id="game-over-reason" class="game-over-reason">时间到！</p>
+            <div class="final-stats">
+                <p>最终分数: <span id="final-score">0</span></p>
+                <p>最高连击: <span id="final-combo">0</span></p>
+                <p>消除次数: <span id="final-tens">0</span></p>
+            </div>
+            <button id="play-again-btn" class="btn btn-primary">
+                <i class="fas fa-play-circle"></i> 再玩一次
+            </button>
+        </div>
+    </div>
+
+    <div id="combo-popup" class="combo-popup"></div>
+
+    <script src="game.js"></script>
+</body>
+</html>
