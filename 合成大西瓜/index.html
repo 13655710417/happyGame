@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🍉 合成大西瓜</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:'Segoe UI Emoji','Apple Color Emoji',sans-serif;background:linear-gradient(180deg,#FFD1DC 0%,#E6B8FF 50%,#A8E6CF 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;min-height:100vh}
+body::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="a" cx=".5" cy=".5" r=".5"><stop offset="0%" stop-color="%23FFFFFF" stop-opacity=".3"/><stop offset="100%" stop-color="%23FFFFFF" stop-opacity="0"/></radialGradient></defs><circle cx="20" cy="20" r="15" fill="url(%23a)"/><circle cx="80" cy="40" r="12" fill="url(%23a)"/><circle cx="40" cy="80" r="18" fill="url(%23a)"/></svg>');background-size:200px 200px;opacity:0.6;pointer-events:none}
+.game-wrap{position:relative;width:100%;max-width:420px;height:700px;display:flex;flex-direction:column}
+.hd{text-align:center;padding:12px;background:rgba(255,255,255,0.5);backdrop-filter:blur(10px);border-radius:0 0 24px 24px;z-index:10;border-bottom:3px solid rgba(255,182,193,0.6)}
+.tt{font-size:1.8em;color:#FF69B4;text-shadow:2px 2px 4px rgba(255,105,180,0.3);margin-bottom:4px}
+.st{display:flex;gap:12px;justify-content:center;margin:6px 0;font-size:0.85em}
+.st span{background:linear-gradient(135deg,#FFD1DC,#FFB6C1);padding:6px 14px;border-radius:16px;color:#8B4513;box-shadow:0 4px 8px rgba(255,182,193,0.4);border:1px solid rgba(255,255,255,0.7)}
+.game-area{flex:1;position:relative;margin:10px;background:rgba(255,255,255,0.4);border-radius:24px;overflow:hidden;border:4px solid rgba(255,182,193,0.7);box-shadow:0 10px 30px rgba(255,182,193,0.3);min-height:0}
+#canvas{display:block;width:100%;height:100%}
+.warn-line{position:absolute;top:80px;left:0;right:0;height:2px;background:repeating-linear-gradient(90deg,#e74c3c 0,#e74c3c 10px,transparent 10px,transparent 20px);opacity:0.7;pointer-events:none}
+.warn-text{position:absolute;top:60px;right:10px;font-size:0.7em;color:#e74c3c;opacity:0.8}
+.next-fruit{position:absolute;top:10px;left:10px;background:rgba(255,255,255,0.8);padding:6px 12px;border-radius:12px;font-size:0.8em;display:flex;align-items:center;gap:6px}
+.strategy-btn{position:absolute;top:10px;right:50px;background:rgba(255,255,255,0.8);border:none;width:36px;height:36px;border-radius:50%;font-size:1.1em;cursor:pointer;transition:transform 0.15s}
+.strategy-btn:hover{transform:scale(1.1)}
+.help-btn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.8);border:none;width:36px;height:36px;border-radius:50%;font-size:1.1em;cursor:pointer;transition:transform 0.15s}
+.help-btn:hover{transform:scale(1.1)}
+.preview{position:absolute;top:0;pointer-events:none;opacity:0.6;transition:left 0.05s}
+.tools{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.tool-btn{background:linear-gradient(135deg,#FF9EBC,#FF6B9D);color:#fff;border:none;padding:10px 20px;border-radius:24px;font-size:0.85em;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;box-shadow:0 6px 12px rgba(255,107,157,0.4)}
+.tool-btn:hover:not(:disabled){transform:translateY(-4px);box-shadow:0 10px 20px rgba(255,107,157,0.6)}
+.tool-btn:disabled{background:#bbb;cursor:not-allowed}
+.md{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.md.sh{opacity:1;pointer-events:all}
+.mb{background:#fff;padding:25px;border-radius:24px;text-align:center;max-width:320px;transform:scale(0.85);transition:transform 0.2s}
+.md.sh .mb{transform:scale(1)}
+.me{font-size:3.5em;margin-bottom:12px}
+.mt{font-size:1.3em;color:#333;margin-bottom:6px}
+.mx{color:#666;margin-bottom:18px;font-size:0.95em}
+.mbs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.mn{background:linear-gradient(135deg,#FF9EBC,#FF6B9D);color:#fff;border:none;padding:12px 28px;border-radius:24px;font-size:0.95em;cursor:pointer;transition:transform 0.12s;box-shadow:0 6px 12px rgba(255,107,157,0.5)}
+.mn:hover{transform:scale(1.05)}
+.mn.rv{background:linear-gradient(135deg,#FFD166,#FFB347)}
+.fruit-legend{position:absolute;bottom:50px;left:10px;background:rgba(255,255,255,0.85);padding:8px;border-radius:12px;font-size:0.6em;display:flex;flex-direction:column;gap:2px}
+.achievement-sidebar{background:rgba(255,255,255,0.8);border-radius:20px;padding:15px;margin:10px;width:220px;max-height:600px;overflow-y:auto;backdrop-filter:blur(8px);border:3px solid rgba(255,182,193,0.7);box-shadow:0 10px 30px rgba(255,182,193,0.3)}
+.achievement-title{font-size:1.2em;color:#FF69B4;margin-bottom:12px;text-align:center;font-weight:bold}
+.achievement-item{margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.9);border-radius:12px;display:flex;align-items:center;gap:10px;transition:all 0.2s;border:2px solid transparent}
+.achievement-item.unlocked{border-color:#FF69B4;background:rgba(255,182,193,0.15)}
+.achievement-emoji{font-size:1.5em}
+.achievement-text{flex:1;font-size:0.8em;color:#555}
+.achievement-check{color:#4CAF50;font-size:1.2em}
+.skin-selector{margin-top:8px;text-align:center}
+.skin-selector select{background:linear-gradient(135deg,#FFD1DC,#FFB6C1);border:none;padding:6px 12px;border-radius:16px;color:#8B4513;font-size:0.8em;cursor:pointer;box-shadow:0 4px 8px rgba(255,182,193,0.4);border:1px solid rgba(255,255,255,0.7);outline:none}
+.skin-selector select option{background:#fff;color:#333}
+.container{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;width:100%;padding:10px;gap:20px;flex:1;min-height:0}
+.achievement-sidebar{width:100%;max-width:420px}
+.tools-sidebar{margin-top:20px;padding-top:15px;border-top:2px dashed rgba(255,182,193,0.5);display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+#tools{display:none} /* 隐藏原来的道具栏 */
+@media (min-width: 769px){.container{flex-direction:row;justify-content:center;align-items:flex-start}.achievement-sidebar{width:250px;margin-left:20px}}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="game-wrap">
+        <div class="hd">
+            <h1 class="tt">🍉 合成大西瓜</h1>
+            <div class="st">
+                <span>🎯 <b id="score">0</b>分</span>
+                <span>🏆 <b id="best">0</b></span>
+                <span>💫 <b id="rv">1</b></span>
+            </div>
+            <div class="skin-selector">
+                <select id="skinSelect" onchange="changeSkin(this.value)">
+                    <!-- 皮肤选项将通过JS动态生成 -->
+                </select>
+            </div>
+        </div>
+        <div class="game-area" id="gameArea">
+            <canvas id="canvas"></canvas>
+            <div class="warn-line"></div>
+            <div class="warn-text">⚠️ 警戒线</div>
+            <div class="next-fruit">下一个: <span id="nextFruit">🍒</span></div>
+            <button class="strategy-btn" onclick="showStrategy()">📈</button>
+            <button class="help-btn" onclick="showHelp()">❓</button>
+            <div class="preview" id="preview"></div>
+            <div class="tools" id="tools">
+                <!-- 道具按钮将通过JS动态生成 -->
+            </div>
+        </div>
+    </div>
+    <div class="achievement-sidebar">
+        <div class="achievement-title">🏆 成就系统</div>
+        <div id="achievementList">
+            <!-- 成就项将通过JS动态生成 -->
+        </div>
+        <div id="toolsSidebar" class="tools-sidebar">
+            <!-- 道具按钮将在这里生成 -->
+        </div>
+    </div>
+</div>
+<div class="md" id="md">
+    <div class="mb">
+        <div class="me" id="mEmoji">😭</div>
+        <div class="mt" id="mTitle">游戏结束</div>
+        <div class="mx" id="mText">得分: 0</div>
+        <div class="mbs" id="mBtns"></div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+const FRUITS = [
+    {emoji:'🍒',r:16,score:1},
+    {emoji:'🍓',r:20,score:2},
+    {emoji:'🍇',r:26,score:3},
+    {emoji:'🍊',r:32,score:5},
+    {emoji:'🍋',r:38,score:8},
+    {emoji:'🍑',r:45,score:13},
+    {emoji:'🍎',r:52,score:21},
+    {emoji:'🍐',r:60,score:34},
+    {emoji:'🥥',r:70,score:55},
+    {emoji:'🍈',r:82,score:89},
+    {emoji:'🍉',r:96,score:144}
+];
+
+// 皮肤系列定义
+const SKINS = [
+    {
+        id: 'fruit',
+        name: '水果乐园',
+        icon: '🍉',
+        emojis: ['🍒','🍓','🍇','🍊','🍋','🍑','🍎','🍐','🥥','🍈','🍉'],
+        colors: ['#FFD1DC', '#E6B8FF', '#A8E6CF'],
+        unlocked: true  // 默认解锁
+    },
+    {
+        id: 'vegetable',
+        name: '蔬菜农场',
+        icon: '🥦',
+        emojis: ['🌽','🥕','🍅','🥒','🥬','🫑','🍆','🥔','🧅','🥦','🎃'],
+        colors: ['#C1E1C1', '#B5EAD7', '#FFDAC1'],
+        unlocked: false,
+        achievementRequired: 'first_melon'  // 合成蜜瓜后解锁
+    },
+    {
+        id: 'animal',
+        name: '动物世界',
+        icon: '🐯',
+        emojis: ['🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷'],
+        colors: ['#FFD1DC', '#FFB6C1', '#FF9AA2'],
+        unlocked: false,
+        achievementRequired: 'score_2000'  // 得分1500后解锁
+    },
+    {
+        id: 'planet',
+        name: '星球宇宙',
+        icon: '🪐',
+        emojis: ['☄️','🌍','🌕','🪐','🌌','⭐','🌟','✨','💫','☀️','🌙'],
+        colors: ['#0D1B2A', '#1B263B', '#415A77'],
+        unlocked: false,
+        achievementRequired: 'score_5000'  // 得分2200后解锁
+    }
+];
+
+// 当前选中的皮肤ID
+let currentSkinId = 'fruit';
+
+// 获取当前皮肤的emoji数组
+function getCurrentSkin() {
+    return SKINS.find(skin => skin.id === currentSkinId) || SKINS[0];
+}
+
+// 获取指定类型的水果emoji
+function getFruitEmoji(type) {
+    const skin = getCurrentSkin();
+    return skin.emojis[type] || FRUITS[type].emoji;
+}
+
+// 获取当前皮肤的背景渐变颜色
+function getSkinBackground() {
+    const skin = getCurrentSkin();
+    return `linear-gradient(180deg, ${skin.colors[0]} 0%, ${skin.colors[1]} 50%, ${skin.colors[2]} 100%)`;
+}
+const ACHIEVEMENTS = [
+    {id:'first_melon', emoji:'🍈', title:'首次合成蜜瓜', desc:'合成第一个🍈蜜瓜', condition:(game)=>game.achievements.first_melon},
+    {id:'first_watermelon', emoji:'🍉', title:'首次合成西瓜', desc:'合成第一个🍉大西瓜', condition:(game)=>game.achievements.first_watermelon},
+    {id:'score_2000', emoji:'🏆', title:'得分高手', desc:'单局得分达到1500分', condition:(game)=>game.achievements.score_2000},
+    {id:'score_5000', emoji:'⭐', title:'得分大师', desc:'单局得分达到2200分', condition:(game)=>game.achievements.score_5000},
+    {id:'no_revive_win', emoji:'💪', title:'一次通关', desc:'不使用复活通关游戏', condition:(game)=>game.achievements.no_revive_win},
+    {id:'combo_5', emoji:'🔥', title:'连续合成', desc:'连续合成5次以上', condition:(game)=>game.achievements.combo_5},
+    {id:'fast_watermelon', emoji:'⚡', title:'快速合成', desc:'在60秒内合成🍐梨或🥥椰子', condition:(game)=>game.achievements.fast_watermelon}
+];
+const WARN_Y = 80;
+const DROP_TYPES = 5; // 只随机前5种水果掉落
+
+let engine, render, world, runner;
+let gameArea, canvas, ctx;
+let W, H;
+let score = 0, best = +(localStorage.hcdxg_b||0), revives = 1;
+let currentType = 0, nextType = 0;
+let canDrop = true, gameOver = false;
+let achievements = {};
+try {
+    achievements = JSON.parse(localStorage.hcdxg_achievements || '{}');
+} catch(e) {
+    console.error('Failed to parse achievements:', e);
+    achievements = {};
+}
+let fruits = [];
+let walls = [];
+let dropX = 0;
+let combo = 0, lastMergeTime = 0, gameStartTime = 0;
+// 道具系统
+let tools = {
+    bomb: {count: 1, active: false, radius: 80, emoji: '💣', name: '炸弹', freeUsed: false},
+    refresh: {count: 2, active: false, emoji: '🔄', name: '刷新', freeUsed: false},
+    doubleScore: {count: 1, active: false, duration: 10000, emoji: '2️⃣', name: '双倍得分', multiplier: 2, endTime: 0, freeUsed: false}
+};
+let scoreMultiplier = 1;
+
+function init() {
+    console.log('Initializing game...');
+    gameArea = document.getElementById('gameArea');
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+    
+    resize();
+    window.addEventListener('resize', resize);
+    
+    setupPhysics();
+    setupEvents();
+    renderAchievements();
+    renderSkinSelect();
+    renderTools();
+    document.body.style.background = getSkinBackground();
+    newGame();
+}
+
+function renderAchievements() {
+    console.log('Rendering achievements...');
+    const list = document.getElementById('achievementList');
+    if (!list) {
+        console.error('achievementList element not found');
+        return;
+    }
+    if (!ACHIEVEMENTS) {
+        console.error('ACHIEVEMENTS is not defined');
+        return;
+    }
+    console.log(`Found ${ACHIEVEMENTS.length} achievements`);
+    list.innerHTML = '';
+    ACHIEVEMENTS.forEach(ach => {
+        const unlocked = achievements[ach.id] || false;
+        const item = document.createElement('div');
+        item.className = 'achievement-item' + (unlocked ? ' unlocked' : '');
+        item.innerHTML = `
+            <div class="achievement-emoji">${ach.emoji}</div>
+            <div class="achievement-text">
+                <strong>${ach.title}</strong><br>
+                <small>${ach.desc}</small>
+            </div>
+            <div class="achievement-check">${unlocked ? '✅' : '🔒'}</div>
+        `;
+        list.appendChild(item);
+    });
+}
+
+function renderSkinSelect() {
+    console.log('Rendering skin selector...');
+    const select = document.getElementById('skinSelect');
+    if (!select) {
+        console.error('skinSelect element not found');
+        return;
+    }
+    select.innerHTML = '';
+    SKINS.forEach(skin => {
+        // 检查皮肤是否已解锁
+        let unlocked = skin.unlocked;
+        if (!unlocked && skin.achievementRequired) {
+            unlocked = achievements[skin.achievementRequired] || false;
+        }
+        const option = document.createElement('option');
+        option.value = skin.id;
+
+        // 构建显示文本
+        let displayText = skin.icon + ' ' + skin.name;
+
+        if (!unlocked) {
+            option.disabled = true;
+            // 显示解锁要求
+            let requirementText = ' (锁定)';
+            if (skin.achievementRequired) {
+                // 查找对应的成就信息
+                const achievement = ACHIEVEMENTS.find(a => a.id === skin.achievementRequired);
+                if (achievement) {
+                    requirementText = ` (解锁要求: ${achievement.title})`;
+                }
+            }
+            displayText += requirementText;
+        }
+
+        option.textContent = displayText;
+        if (skin.id === currentSkinId) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    });
+}
+
+function renderTools() {
+    console.log('Rendering tools...');
+    const toolsContainer = document.getElementById('toolsSidebar');
+    if (!toolsContainer) {
+        console.error('toolsSidebar container not found');
+        return;
+    }
+    toolsContainer.innerHTML = '';
+
+    // 创建炸弹按钮
+    const bombBtn = document.createElement('button');
+    bombBtn.className = 'tool-btn';
+    bombBtn.innerHTML = `${tools.bomb.emoji} ${tools.bomb.freeUsed ? '📺' : '🆓'}`;
+    bombBtn.title = tools.bomb.freeUsed ? '炸弹（需看广告）' : '炸弹（免费使用）';
+    bombBtn.onclick = () => useTool('bomb');
+    bombBtn.disabled = gameOver || tools.bomb.active;
+    toolsContainer.appendChild(bombBtn);
+
+    // 创建刷新按钮
+    const refreshBtn = document.createElement('button');
+    refreshBtn.className = 'tool-btn';
+    refreshBtn.innerHTML = `${tools.refresh.emoji} ${tools.refresh.freeUsed ? '📺' : '🆓'}`;
+    refreshBtn.title = tools.refresh.freeUsed ? '刷新（需看广告）' : '刷新（免费使用）';
+    refreshBtn.onclick = () => useTool('refresh');
+    refreshBtn.disabled = gameOver;
+    toolsContainer.appendChild(refreshBtn);
+
+    // 创建双倍得分按钮
+    const doubleScoreBtn = document.createElement('button');
+    doubleScoreBtn.className = 'tool-btn';
+    doubleScoreBtn.innerHTML = `${tools.doubleScore.emoji} ${tools.doubleScore.freeUsed ? '📺' : '🆓'}`;
+    doubleScoreBtn.title = tools.doubleScore.freeUsed ? '双倍得分（需看广告）' : '双倍得分（免费使用）';
+    doubleScoreBtn.onclick = () => useTool('doubleScore');
+    doubleScoreBtn.disabled = gameOver || tools.doubleScore.active;
+    toolsContainer.appendChild(doubleScoreBtn);
+}
+
+function useTool(toolType) {
+    if (gameOver) return;
+
+    const tool = tools[toolType];
+    if (!tool) return;
+
+    // 检查是否是免费使用
+    if (!tool.freeUsed) {
+        // 第一次免费使用
+        tool.freeUsed = true;
+        executeTool(toolType);
+    } else {
+        // 需要观看广告
+        showAdForTool(toolType);
+    }
+}
+
+function executeTool(toolType) {
+    const tool = tools[toolType];
+    if (!tool) return;
+
+    switch(toolType) {
+        case 'bomb':
+            // 进入炸弹模式，等待用户点击水果
+            tool.active = true;
+            showBombModeHint();
+            renderTools();
+            break;
+
+        case 'refresh':
+            // 立即刷新下一个水果
+            nextType = randType();
+            document.getElementById('nextFruit').textContent = getFruitEmoji(nextType);
+            renderTools();
+            break;
+
+        case 'doubleScore':
+            // 激活双倍得分效果
+            tool.active = true;
+            tool.endTime = Date.now() + tool.duration;
+            scoreMultiplier = tool.multiplier;
+            renderTools();
+
+            // 10秒后恢复
+            setTimeout(() => {
+                if (tool.active) {
+                    tool.active = false;
+                    scoreMultiplier = 1;
+                    renderTools();
+                }
+            }, tool.duration);
+            break;
+    }
+}
+
+function showAdForTool(toolType) {
+    const tool = tools[toolType];
+    if (!tool) return;
+
+    let adSeconds = 5;
+    const adModal = document.createElement('div');
+    adModal.id = 'adModal';
+    adModal.style.position = 'fixed';
+    adModal.style.top = '0';
+    adModal.style.left = '0';
+    adModal.style.width = '100%';
+    adModal.style.height = '100%';
+    adModal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+    adModal.style.display = 'flex';
+    adModal.style.alignItems = 'center';
+    adModal.style.justifyContent = 'center';
+    adModal.style.zIndex = '2000';
+    adModal.style.color = 'white';
+    adModal.style.fontSize = '1.2em';
+    adModal.style.textAlign = 'center';
+
+    adModal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #FF9EBC, #FF6B9D); padding: 30px; border-radius: 24px; max-width: 300px;">
+            <div style="font-size: 2em; margin-bottom: 15px;">📺</div>
+            <div style="font-weight: bold; margin-bottom: 10px;">观看广告解锁道具</div>
+            <div style="margin-bottom: 20px;">请观看5秒广告后使用道具</div>
+            <div id="adCountdown" style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px;">${adSeconds}秒</div>
+            <button id="cancelAd" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">取消</button>
+        </div>
+    `;
+
+    document.body.appendChild(adModal);
+
+    const countdownEl = document.getElementById('adCountdown');
+    const cancelBtn = document.getElementById('cancelAd');
+
+    cancelBtn.onclick = () => {
+        document.body.removeChild(adModal);
+    };
+
+    let remaining = adSeconds;
+    const countdown = setInterval(() => {
+        remaining--;
+        countdownEl.textContent = remaining + '秒';
+
+        if (remaining <= 0) {
+            clearInterval(countdown);
+            document.body.removeChild(adModal);
+            // 广告观看完成，执行道具
+            executeTool(toolType);
+        }
+    }, 1000);
+}
+
+function changeSkin(skinId) {
+    const skin = SKINS.find(s => s.id === skinId);
+    if (!skin) return;
+    // 检查是否解锁
+    let unlocked = skin.unlocked;
+    if (!unlocked && skin.achievementRequired) {
+        unlocked = achievements[skin.achievementRequired] || false;
+    }
+    if (!unlocked) {
+        let alertText = '该皮肤尚未解锁！';
+        if (skin.achievementRequired) {
+            // 查找对应的成就信息
+            const achievement = ACHIEVEMENTS.find(a => a.id === skin.achievementRequired);
+            if (achievement) {
+                alertText = `该皮肤尚未解锁！\n解锁要求: ${achievement.title}`;
+            }
+        }
+        alert(alertText);
+        // 重置选择为当前皮肤
+        renderSkinSelect();
+        return;
+    }
+    currentSkinId = skinId;
+    // 更新背景渐变
+    document.body.style.background = getSkinBackground();
+    // 更新下一个水果显示（当前水果类型不变，但emoji会变）
+    document.getElementById('nextFruit').textContent = getFruitEmoji(nextType);
+    // 重绘预览
+    updatePreview();
+    // 重绘所有水果（下次draw循环会自动更新）
+}
+
+function checkAchievement(id) {
+    if (!achievements[id]) {
+        achievements[id] = true;
+        localStorage.hcdxg_achievements = JSON.stringify(achievements);
+        renderAchievements();
+        renderSkinSelect();
+        // 可以添加解锁提示
+        showUnlockAlert(ACHIEVEMENTS.find(a => a.id === id));
+    }
+}
+
+function showUnlockAlert(achievement) {
+    // 简单提示，可以扩展为更炫酷的效果
+    const alert = document.createElement('div');
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.background = 'linear-gradient(135deg, #FFD1DC, #FFB6C1)';
+    alert.style.color = '#8B4513';
+    alert.style.padding = '15px';
+    alert.style.borderRadius = '12px';
+    alert.style.boxShadow = '0 6px 20px rgba(255,182,193,0.6)';
+    alert.style.zIndex = '1000';
+    alert.style.border = '2px solid #FF69B4';
+    alert.innerHTML = `<strong>🎉 成就解锁！</strong><br>${achievement.emoji} ${achievement.title}`;
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        document.body.removeChild(alert);
+    }, 3000);
+}
+
+function resize() {
+    const rect = gameArea.getBoundingClientRect();
+    W = rect.width;
+    H = rect.height;
+    console.log('Game area size:', W, 'x', H);
+    canvas.width = W * window.devicePixelRatio;
+    canvas.height = H * window.devicePixelRatio;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    updateWalls();
+}
+
+function updateWalls() {
+    if (!world) return;
+    if (W <= 0 || H <= 0) return;
+    if (walls.length) {
+        Matter.Composite.remove(world, walls);
+    }
+    const wallOpts = {isStatic:true, friction:0.3, restitution:0.2, render:{visible:false}};
+    walls = [
+        Matter.Bodies.rectangle(W/2, H, W, 100, wallOpts), // 底 - 调整位置和厚度
+        Matter.Bodies.rectangle(-25, H/2, 50, H, wallOpts),  // 左
+        Matter.Bodies.rectangle(W+25, H/2, 50, H, wallOpts)  // 右
+    ];
+    Matter.Composite.add(world, walls);
+}
+
+function setupPhysics() {
+    console.log('Setting up physics engine...');
+    engine = Matter.Engine.create();
+    world = engine.world;
+    engine.gravity.y = 1.2;
+    
+    // 墙壁
+    updateWalls();
+    
+    // 碰撞检测
+    Matter.Events.on(engine, 'collisionStart', onCollision);
+    
+    runner = Matter.Runner.create();
+    Matter.Runner.run(runner, engine);
+    
+    requestAnimationFrame(draw);
+}
+
+function setupEvents() {
+    console.log('Setting up events');
+    const area = gameArea;
+    if (!area) {
+        console.error('gameArea not found');
+        return;
+    }
+    area.addEventListener('mousemove', e => {
+        if(gameOver) return;
+        const rect = area.getBoundingClientRect();
+        dropX = Math.max(FRUITS[currentType].r, Math.min(W - FRUITS[currentType].r, e.clientX - rect.left));
+        updatePreview();
+    });
+    area.addEventListener('touchmove', e => {
+        if(gameOver) return;
+        const rect = area.getBoundingClientRect();
+        dropX = Math.max(FRUITS[currentType].r, Math.min(W - FRUITS[currentType].r, e.touches[0].clientX - rect.left));
+        updatePreview();
+        e.preventDefault();
+    }, {passive:false});
+    area.addEventListener('click', e => {
+        if (tools.bomb.active) {
+            const rect = area.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            handleBombClick(x, y);
+        } else {
+            drop();
+        }
+    });
+    area.addEventListener('touchend', e => {
+        if (tools.bomb.active) {
+            const rect = area.getBoundingClientRect();
+            const touch = e.changedTouches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            handleBombClick(x, y);
+            e.preventDefault();
+        } else {
+            drop();
+            e.preventDefault();
+        }
+    });
+}
+
+function handleBombClick(x, y) {
+    if (!tools.bomb.active) return;
+
+    // 寻找被点击的水果
+    let clickedFruit = null;
+    for (const f of fruits) {
+        const dx = f.body.position.x - x;
+        const dy = f.body.position.y - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const fruitRadius = FRUITS[f.type].r;
+        if (distance < fruitRadius) {
+            clickedFruit = f;
+            break;
+        }
+    }
+
+    // 如果没有点击到水果，取消炸弹模式
+    if (!clickedFruit) {
+        tools.bomb.active = false;
+        hideBombModeHint();
+        renderTools();
+        return;
+    }
+
+    // 移除被点击的水果
+    Matter.Composite.remove(world, clickedFruit.body);
+    fruits = fruits.filter(f => f !== clickedFruit);
+
+    // 显示爆炸效果在被点击的水果位置
+    const bombRadius = FRUITS[clickedFruit.type].r * 1.5; // 根据水果大小调整爆炸半径
+    const explosion = document.createElement('div');
+    explosion.style.position = 'absolute';
+    explosion.style.left = (clickedFruit.body.position.x - bombRadius) + 'px';
+    explosion.style.top = (clickedFruit.body.position.y - bombRadius) + 'px';
+    explosion.style.width = (bombRadius * 2) + 'px';
+    explosion.style.height = (bombRadius * 2) + 'px';
+    explosion.style.borderRadius = '50%';
+    explosion.style.background = 'radial-gradient(circle, rgba(255,100,100,0.8) 0%, rgba(255,50,50,0.4) 70%, transparent 100%)';
+    explosion.style.border = '4px solid rgba(255,50,50,0.8)';
+    explosion.style.zIndex = '100';
+    explosion.style.display = 'flex';
+    explosion.style.alignItems = 'center';
+    explosion.style.justifyContent = 'center';
+    explosion.style.fontSize = '48px';
+    explosion.style.color = 'white';
+    explosion.style.pointerEvents = 'none';
+    explosion.textContent = '💥';
+
+    gameArea.appendChild(explosion);
+
+    // 动画效果
+    explosion.animate([
+        { transform: 'scale(0.5)', opacity: 0 },
+        { transform: 'scale(1.2)', opacity: 1 },
+        { transform: 'scale(1)', opacity: 0.8 }
+    ], {
+        duration: 300,
+        easing: 'ease-out'
+    });
+
+    // 关闭炸弹模式
+    tools.bomb.active = false;
+    hideBombModeHint();
+    renderTools();
+
+    // 1秒后移除爆炸效果
+    setTimeout(() => {
+        if (explosion.parentNode) {
+            gameArea.removeChild(explosion);
+        }
+    }, 1000);
+}
+
+function updatePreview() {
+    const p = document.getElementById('preview');
+    const f = FRUITS[currentType];
+    p.style.left = (dropX - f.r) + 'px';
+    p.style.fontSize = (f.r * 1.5) + 'px';
+    p.textContent = getFruitEmoji(currentType);
+}
+
+function newGame() {
+    console.log('New game started');
+    // 清除旧水果
+    fruits.forEach(f => Matter.Composite.remove(world, f.body));
+    fruits = [];
+
+    score = 0;
+    revives = 1;
+    gameOver = false;
+    canDrop = true;
+    combo = 0;
+    lastMergeTime = 0;
+    gameStartTime = Date.now();
+
+    // 重置道具状态（每局游戏免费使用一次）
+    tools.bomb.freeUsed = false;
+    tools.bomb.active = false;
+    tools.refresh.freeUsed = false;
+    tools.doubleScore.freeUsed = false;
+    hideBombModeHint();
+
+    currentType = randType();
+    nextType = randType();
+    dropX = W / 2;
+
+    updateUI();
+    updatePreview();
+    renderTools();
+}
+
+function randType() {
+    return Math.floor(Math.random() * DROP_TYPES);
+}
+
+function drop() {
+    console.log('Drop fruit, type:', currentType);
+    if (tools.bomb.active) return; // 炸弹模式下不掉落水果
+    if (!canDrop || gameOver) return;
+    canDrop = false;
+    
+    createFruit(currentType, dropX, 50);
+    
+    currentType = nextType;
+    nextType = randType();
+    document.getElementById('nextFruit').textContent = getFruitEmoji(nextType);
+    updatePreview();
+    
+    setTimeout(() => { canDrop = true; }, 300);
+}
+
+function createFruit(type, x, y) {
+    console.log('Create fruit:', getFruitEmoji(type), 'at', x, y);
+    const f = FRUITS[type];
+    const body = Matter.Bodies.circle(x, y, f.r, {
+        friction: 0.5,
+        restitution: 0.3,
+        frictionAir: 0.01,
+        label: 'fruit',
+        density: 0.001 + type * 0.0002
+    });
+    body.fruitType = type;
+    body.fruitId = Date.now() + Math.random();
+    body.createdAt = Date.now();
+    Matter.Composite.add(world, body);
+    fruits.push({body, type});
+    return body;
+}
+
+function onCollision(event) {
+    const pairs = event.pairs;
+    pairs.forEach(pair => {
+        const a = pair.bodyA, b = pair.bodyB;
+        if (a.label !== 'fruit' || b.label !== 'fruit') return;
+        if (a.fruitType !== b.fruitType) return;
+        if (a.merged || b.merged) return;
+        
+        // 合成
+        const type = a.fruitType;
+        if (type >= FRUITS.length - 1) return; // 已经是西瓜
+        
+        a.merged = b.merged = true;
+        const newX = (a.position.x + b.position.x) / 2;
+        const newY = (a.position.y + b.position.y) / 2;
+        
+        setTimeout(() => {
+            Matter.Composite.remove(world, a);
+            Matter.Composite.remove(world, b);
+            fruits = fruits.filter(f => f.body !== a && f.body !== b);
+            
+            const newFruit = createFruit(type + 1, newX, newY);
+            score += FRUITS[type + 1].score * scoreMultiplier;
+            updateUI();
+
+            // 更新连续合成计数
+            const now = Date.now();
+            if (now - lastMergeTime < 2000) {
+                combo++;
+            } else {
+                combo = 1;
+            }
+            lastMergeTime = now;
+            if (combo >= 5) {
+                checkAchievement('combo_5');
+            }
+
+            // 检查合成成就
+            if (type + 1 === 9) { // 🍈
+                checkAchievement('first_melon');
+            } else if (type + 1 === 10) { // 🍉
+                checkAchievement('first_watermelon');
+            }
+            // 快速合成梨或椰子成就
+            if ((type + 1 === 7 || type + 1 === 8) && now - gameStartTime < 60000) {
+                checkAchievement('fast_watermelon');
+            }
+            // 检查得分成就
+            if (score >= 1500) checkAchievement('score_2000');
+            if (score >= 2200) checkAchievement('score_5000');
+            
+            // 合成西瓜特效
+            if (type + 1 === FRUITS.length - 1) {
+                // 可以加特效
+            }
+        }, 50);
+    });
+}
+
+function checkGameOver() {
+    const now = Date.now();
+    for (const f of fruits) {
+        // 只检查存在超过2秒的水果
+        if (now - f.body.createdAt < 2000) continue;
+        // 水果顶部超过警戒线，且速度很小（已静止）
+        const topY = f.body.position.y - FRUITS[f.type].r;
+        const speed = Math.abs(f.body.velocity.y);
+        if (topY < WARN_Y && speed < 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+    
+    // 画水果
+    fruits.forEach(f => {
+        const {body, type} = f;
+        const fruit = FRUITS[type];
+        ctx.save();
+        ctx.translate(body.position.x, body.position.y);
+        ctx.rotate(body.angle);
+        ctx.font = (fruit.r * 1.6) + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(getFruitEmoji(type), 0, 0);
+        ctx.restore();
+    });
+    
+    // 检查游戏结束
+    if (!gameOver && fruits.length > 0) {
+        setTimeout(() => {
+            if (checkGameOver()) {
+                endGame();
+            }
+        }, 500);
+    }
+    
+    requestAnimationFrame(draw);
+}
+
+function updateUI() {
+    const scoreElement = document.getElementById('score');
+    let scoreText = score.toString();
+    if (scoreMultiplier > 1) {
+        scoreText += ` ×${scoreMultiplier}`;
+    }
+    scoreElement.textContent = scoreText;
+    document.getElementById('best').textContent = best;
+    document.getElementById('rv').textContent = revives;
+}
+
+function useRevive() {
+    if (revives <= 0) return;
+    revives--;
+    
+    // 移除最高的3个水果
+    fruits.sort((a, b) => a.body.position.y - b.body.position.y);
+    const toRemove = fruits.slice(0, Math.min(3, fruits.length));
+    toRemove.forEach(f => {
+        Matter.Composite.remove(world, f.body);
+    });
+    fruits = fruits.filter(f => !toRemove.includes(f));
+    
+    gameOver = false;
+    canDrop = true;
+    updateUI();
+    hideModal();
+}
+
+function showHelp() {
+    showModal('🍉', '合成大西瓜', `
+<div style="text-align:left;font-size:0.85em;line-height:1.6">
+<b>🎮 玩法：</b><br>
+点击屏幕掉落水果，相同水果碰撞会合成更大的水果！<br><br>
+<b>🍒 合成顺序：</b><br>
+🍒→🍓→🍇→🍊→🍋<br>→🍑→🍎→🍐→🥥→🍈→🍉<br><br>
+<b>🎨 皮肤系统：</b><br>
+• 达成成就可解锁新皮肤系列<br>
+• 在标题下方下拉菜单中选择皮肤<br><br>
+<b>📄 其他皮肤合成路线：</b><br>
+• <b>蔬菜农场</b>：🌽→🥕→🍅→🥒→🥬→🫑→🍆→🥔→🧅→🥦→🎃<br>
+• <b>动物世界</b>：🐭→🐹→🐰→🦊→🐻→🐼→🐨→🐯→🦁→🐮→🐷<br>
+• <b>星球宇宙</b>：☄️→🌍→🌕→🪐→🌌→⭐→🌟→✨→💫→☀️→🌙<br><br>
+<b>🛠️ 道具系统：</b><br>
+• <b>💣 炸弹</b>：敲除某一个水果，其他水果根据物理规律修正位置（每局免费1次，第2次需看5秒广告）<br>
+• <b>🔄 刷新</b>：立即更换下一个要掉落的水果（每局免费1次，第2次需看5秒广告）<br>
+• <b>2️⃣ 双倍得分</b>：10秒内合成得分翻倍（每局免费1次，第2次需看5秒广告）<br>
+• 道具按钮位于成就栏下方<br><br>
+<b>⚠️ 规则：</b><br>
+• 水果堆超过警戒线则失败<br>
+• 有一次复活机会<br>
+• 合成越大的水果分数越高
+</div>
+    `, [{t:'知道了', f:hideModal}]);
+}
+
+function showStrategy() {
+    showModal('📈', '高分攻略', `
+<div style="text-align:left;font-size:0.85em;line-height:1.6">
+<b>🎯 高分技巧：</b><br>
+1. <b>控制落点</b>：尽量让水果靠拢，但避免堆叠过高。<br>
+2. <b>利用墙壁</b>：水果碰撞墙壁会反弹，可借此调整位置。<br>
+3. <b>优先合成</b>：尽早合成大水果，得分更高。<br>
+4. <b>保留空间</b>：警戒线以下留出空间，防止意外堆高。<br>
+5. <b>复活时机</b>：复活会移除最上方3个水果，关键时刻使用。<br><br>
+<b>🌟 进阶策略：</b><br>
+• 连续合成可获得额外分数，尝试在2秒内连续合成。<br>
+• 观察下一个水果，提前规划落点。<br>
+• 不同皮肤系列不会影响游戏机制，但带来新鲜感。<br>
+• 解锁成就可获得新皮肤，增加游戏乐趣。<br>
+</div>
+    `, [{t:'明白了', f:hideModal}]);
+}
+
+function endGame() {
+    gameOver = true;
+    canDrop = false;
+    tools.bomb.active = false;
+    hideBombModeHint();
+    if (score > best) {
+        best = score;
+        localStorage.hcdxg_b = best;
+    }
+    // 检查不使用复活的成就
+    if (revives === 1) {
+        checkAchievement('no_revive_win');
+    }
+    
+    if (revives > 0) {
+        showModal('😱', '要撑不住了！', `当前 <b>${score}</b> 分<br>复活将移除最上方3个水果`, [
+            {t:'💫 复活', c:'rv', f:useRevive},
+            {t:'重新开始', f:()=>{hideModal();newGame();}}
+        ]);
+    } else {
+        showModal('😭', '游戏结束', `最终得分: <b>${score}</b>`, [
+            {t:'再来一局', f:()=>{hideModal();newGame();}}
+        ]);
+    }
+}
+
+function showModal(emoji, title, text, btns) {
+    document.getElementById('mEmoji').textContent = emoji;
+    document.getElementById('mTitle').textContent = title;
+    document.getElementById('mText').innerHTML = text;
+    const m = document.getElementById('mBtns');
+    m.innerHTML = '';
+    btns.forEach(b => {
+        const n = document.createElement('button');
+        n.className = 'mn' + (b.c ? ' ' + b.c : '');
+        n.textContent = b.t;
+        n.onclick = b.f;
+        m.appendChild(n);
+    });
+    document.getElementById('md').classList.add('sh');
+}
+
+function hideModal() {
+    document.getElementById('md').classList.remove('sh');
+}
+
+function showBombModeHint() {
+    // 移除已有的提示
+    const existingHint = document.getElementById('bombModeHint');
+    if (existingHint) {
+        existingHint.remove();
+    }
+
+    // 创建炸弹模式提示
+    const hint = document.createElement('div');
+    hint.id = 'bombModeHint';
+    hint.style.position = 'absolute';
+    hint.style.top = '50px';
+    hint.style.left = '50%';
+    hint.style.transform = 'translateX(-50%)';
+    hint.style.background = 'linear-gradient(135deg, #FF9EBC, #FF6B9D)';
+    hint.style.color = 'white';
+    hint.style.padding = '10px 20px';
+    hint.style.borderRadius = '20px';
+    hint.style.fontSize = '0.9em';
+    hint.style.zIndex = '50';
+    hint.style.boxShadow = '0 4px 12px rgba(255,107,157,0.5)';
+    hint.style.display = 'flex';
+    hint.style.alignItems = 'center';
+    hint.style.gap = '8px';
+    hint.innerHTML = '💣 炸弹模式：点击一个水果将其敲除 | 点击空白区域取消';
+
+    gameArea.appendChild(hint);
+}
+
+function hideBombModeHint() {
+    const hint = document.getElementById('bombModeHint');
+    if (hint) {
+        hint.remove();
+    }
+}
+
+init();
+</script>
+</body>
+</html>
