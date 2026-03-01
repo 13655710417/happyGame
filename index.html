@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tao出个游戏 - 动漫风格小游戏平台</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <!-- 星空背景 -->
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-gamepad"></i>
+                <h1>tao出个游戏</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#games" class="nav-link"><i class="fas fa-dice"></i> 游戏大厅</a>
+                <a href="#about" class="nav-link"><i class="fas fa-info-circle"></i> 关于平台</a>
+            </div>
+            <div class="nav-actions">
+                <div class="datetime-clock">
+                    <span class="date-display">📅 <span id="currentDate">加载中...</span></span>
+                    <span class="time-display">⏰ <span id="currentTime">--:--:--</span></span>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-text animate__animated animate__fadeInUp">
+                <h2>欢迎来到<span class="highlight">tao出个游戏</span></h2>
+                <p class="subtitle">一个充满乐趣的动漫风格小游戏集合</p>
+                <p class="description">在这里，你可以体验各种有趣的小游戏，放松心情，挑战自我！</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <i class="fas fa-gamepad"></i>
+                        <span>10款游戏</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-users"></i>
+                        <span>免费畅玩</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-heart"></i>
+                        <span>持续更新</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image animate__animated animate__fadeInRight">
+                <div class="character-container">
+                    <div class="character">
+                        <div class="character-head"></div>
+                        <div class="character-body"></div>
+                        <div class="character-arm left"></div>
+                        <div class="character-arm right"></div>
+                        <div class="character-leg left"></div>
+                        <div class="character-leg right"></div>
+                    </div>
+                    <div class="game-icons">
+                        <div class="icon puzzle"><i class="fas fa-puzzle-piece"></i></div>
+                        <div class="icon brain"><i class="fas fa-brain"></i></div>
+                        <div class="icon sheep"><i class="fas fa-paw"></i></div>
+                        <div class="icon pen"><i class="fas fa-pen"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </header>
+
+    <!-- 游戏大厅 -->
+    <section class="games-section" id="games">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-header-top">
+                    <h2><i class="fas fa-dice"></i> 游戏大厅</h2>
+                </div>
+                <p class="section-subtitle">选择你喜欢的游戏开始冒险吧！</p>
+            </div>
+
+            <div class="games-grid">
+                <!-- 是否与此无关 -->
+                <div class="game-card animate__animated" data-game="story">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>是否与此无关</h3>
+                        <span class="game-tag puzzle-tag">推理</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./是否与此无关/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 数独 -->
+                <div class="game-card animate__animated" data-game="sudoku">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-th"></i>
+                        </div>
+                        <h3>数独</h3>
+                        <span class="game-tag logic-tag">逻辑</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./数独/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 羊了个羊 -->
+                <div class="game-card animate__animated" data-game="sheep">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-sheep"></i>
+                        </div>
+                        <h3>羊了个羊</h3>
+                        <span class="game-tag casual-tag">休闲</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./羊了个羊/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 一笔画 -->
+                <div class="game-card animate__animated" data-game="draw">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-pen-nib"></i>
+                        </div>
+                        <h3>一笔画</h3>
+                        <span class="game-tag puzzle-tag">益智</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./一笔画/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 了不起的AI -->
+                <div class="game-card animate__animated" data-game="ai">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>了不起的AI</h3>
+                        <span class="game-tag ai-tag">智能</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./了不起的AI/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始聊天
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 华容道 -->
+                <div class="game-card animate__animated" data-game="puzzle">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3>华容道</h3>
+                        <span class="game-tag logic-tag">逻辑</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./华容道/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 扫雷 -->
+                <div class="game-card animate__animated" data-game="minesweeper">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-bomb"></i>
+                        </div>
+                        <h3>扫雷</h3>
+                        <span class="game-tag logic-tag">逻辑</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./扫雷/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 合了个十 -->
+                <div class="game-card animate__animated" data-game="combine">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <h3>合了个十</h3>
+                        <span class="game-tag puzzle-tag">数字</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./合了个十/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 主播同款 -->
+                <div class="game-card animate__animated" data-game="streamer">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>主播同款</h3>
+                        <span class="game-tag casual-tag">休闲</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./主播同款/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 合成大西瓜 -->
+                <div class="game-card animate__animated" data-game="watermelon">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <h3>合成大西瓜</h3>
+                        <span class="game-tag casual-tag">休闲</span>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="./合成大西瓜/index.html" class="play-btn">
+                            <i class="fas fa-play-circle"></i> 开始游戏
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于平台 -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-info-circle"></i> 关于平台</h2>
+                <p class="section-subtitle">tao出个游戏的诞生故事</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>我们的使命</h3>
+                    <p>tao出个游戏是一个专注于提供优质小游戏的平台，我们致力于为玩家带来轻松愉快的游戏体验。</p>
+
+                    <h3>平台特色</h3>
+                    <div class="features-list">
+                        <div class="feature">
+                            <i class="fas fa-palette"></i>
+                            <div>
+                                <h4>动漫风格设计</h4>
+                                <p>采用可爱的动漫风格界面，让游戏体验更加愉悦</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div>
+                                <h4>全平台适配</h4>
+                                <p>支持电脑、平板、手机等多种设备，随时随地畅玩</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-heart"></i>
+                            <div>
+                                <h4>完全免费</h4>
+                                <p>所有游戏免费提供，无需注册，点击即玩</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="platform-stats">
+                        <div class="stat-circle">
+                            <div class="circle-progress" data-value="100">
+                                <span>100%</span>
+                            </div>
+                            <p>免费游戏</p>
+                        </div>
+                        <div class="stat-circle">
+                            <div class="circle-progress" data-value="100">
+                                <span>100%</span>
+                            </div>
+                            <p>响应式设计</p>
+                        </div>
+                        <div class="stat-circle">
+                            <div class="circle-progress" data-value="9">
+                                <span>10+</span>
+                            </div>
+                            <p>游戏数量</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <script>
+        // 内联时间更新脚本 - 确保时间显示工作
+        (function() {
+            console.log('🕒 内联时间脚本开始执行');
+
+            function updateDateTimeInline() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = now.getMonth() + 1;
+                const day = now.getDate();
+                const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                const weekday = weekdays[now.getDay()];
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+
+                const dateElement = document.getElementById('currentDate');
+                const timeElement = document.getElementById('currentTime');
+
+                if (dateElement) {
+                    dateElement.textContent = `${year}年${month}月${day}日 ${weekday}`;
+                }
+                if (timeElement) {
+                    timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+                }
+
+                console.log(`🕒 内联脚本更新时间: ${hours}:${minutes}:${seconds}`);
+            }
+
+            // DOM加载后立即执行
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateDateTimeInline();
+                    setInterval(updateDateTimeInline, 1000);
+                    console.log('✅ 内联时间时钟启动');
+                });
+            } else {
+                updateDateTimeInline();
+                setInterval(updateDateTimeInline, 1000);
+                console.log('✅ 内联时间时钟启动（DOM已就绪）');
+            }
+        })();
+    </script>
+
+
+    <script src="script.js"></script>
+
+    <!-- 简单测试脚本 -->
+    <script>
+        console.log('🔧 简单测试脚本加载...');
+
+        // 页面加载后3秒检查
+        setTimeout(function() {
+            console.log('⏱️ 3秒后检查页面状态...');
+
+            // 检查弹窗元素
+            const modal = document.getElementById('favoritesModal');
+            const btn = document.getElementById('favoritesBtn');
+
+            console.log('弹窗元素:', modal ? '✅ 找到' : '❌ 未找到');
+            console.log('按钮元素:', btn ? '✅ 找到' : '❌ 未找到');
+
+            if (modal && btn) {
+                console.log('🎯 添加测试按钮到页面顶部...');
+
+                // 创建测试按钮
+                const testBtn = document.createElement('button');
+                testBtn.textContent = '🎮 测试弹窗显示';
+                testBtn.style.position = 'fixed';
+                testBtn.style.top = '10px';
+                testBtn.style.left = '10px';
+                testBtn.style.zIndex = '9999';
+                testBtn.style.padding = '10px 20px';
+                testBtn.style.backgroundColor = '#ff6b6b';
+                testBtn.style.color = 'white';
+                testBtn.style.border = 'none';
+                testBtn.style.borderRadius = '5px';
+                testBtn.style.cursor = 'pointer';
+                testBtn.style.fontSize = '14px';
+                testBtn.style.fontWeight = 'bold';
+
+                // 点击测试按钮直接显示弹窗
+                testBtn.onclick = function() {
+                    console.log('🎯 测试按钮被点击，直接显示弹窗');
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                    console.log('弹窗已添加.show类');
+                };
+
+                document.body.appendChild(testBtn);
+                console.log('✅ 测试按钮已添加到页面左上角');
+            }
+        }, 3000);
+    </script>
+
+</body>
+</html>
